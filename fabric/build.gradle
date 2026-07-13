@@ -1,6 +1,7 @@
 plugins {
     id 'multiloader-loader'
     id 'net.fabricmc.fabric-loom'
+    id "me.modmuss50.mod-publish-plugin"
 }
 dependencies {
     minecraft("com.mojang:minecraft:${minecraft_version}")
@@ -47,5 +48,26 @@ sourceSets.configureEach {
                 attribute(loaderAttribute, 'fabric')
             }
         }
+    }
+}
+
+publishMods {
+    file.set(jar.archiveFile)
+    type = BETA
+    modLoaders.add("fabric")
+    changelog = rootProject.file("changelog.md").text
+    displayName = mod_id + "-" + project.version + "+" + minecraft_version + "-fabric"
+
+    curseforge {
+        projectId = "1611330"
+        accessToken = findProperty("CF_TOKEN")
+        changelogType = "markdown"
+        minecraftVersions.add(minecraft_version)
+    }
+
+    modrinth {
+        projectId = 'MZGunaW2'
+        accessToken = findProperty("MODRINTH_TOKEN")
+        minecraftVersions.add(minecraft_version)
     }
 }

@@ -20,9 +20,6 @@ public class ModDataAttachments {
     public static final List<AttachmentKey<?>> ALL = new ArrayList<>();
     public static final Map<String, AttachmentKey<Integer>> INT_KEYS = new HashMap<>();
 
-    public static final AttachmentKey<Integer> SPEED_EXPERIENCE = register("speed_experience", Codec.INT, ByteBufCodecs.INT, () -> 0, false);
-    public static final AttachmentKey<Integer> LAST_BLOCK_COUNT = register("last_block_count", Codec.INT, ByteBufCodecs.INT, () -> 0, true);
-
     private static <T> AttachmentKey<T> register(String id, Codec<T> codec, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> def, boolean copyOnDeath) {
         AttachmentKey<T> key = new AttachmentKey<>(id, codec, streamCodec, def, copyOnDeath);
         ALL.add(key);
@@ -46,7 +43,6 @@ public class ModDataAttachments {
     public static void init(){
         Constants.LOGGER.info("Registering data attachments.");
 
-        // TODO: Temporarily code to test API
         ExperienceTypeRegistry.REGISTERED_TYPES.forEach((s, _) -> register(s + "_experience", Codec.INT, ByteBufCodecs.INT, () -> 0, false));
 
         Services.ATTACHMENT.register();

@@ -1,7 +1,7 @@
 package com.coolerpromc.experienceskills.client.renderer.entity;
 
-import com.coolerpromc.experienceskills.client.renderer.entity.state.AbstractExperienceOrbRenderState;
-import com.coolerpromc.experienceskills.entity.custom.AbstractExperienceOrb;
+import com.coolerpromc.experienceskills.client.renderer.entity.state.ModExperienceOrbRenderState;
+import com.coolerpromc.experienceskills.entity.custom.ModExperienceOrb;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -17,11 +17,11 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.NonNull;
 
-public class AbstractExperienceOrbRenderer<T extends AbstractExperienceOrb> extends EntityRenderer<T, AbstractExperienceOrbRenderState> {
+public class ModExperienceOrbRenderer<T extends ModExperienceOrb> extends EntityRenderer<T, ModExperienceOrbRenderState> {
     private static final Identifier EXPERIENCE_ORB_LOCATION = Identifier.withDefaultNamespace("textures/entity/experience/experience_orb.png");
     private static final RenderType RENDER_TYPE = RenderTypes.entityTranslucentCullItemTarget(EXPERIENCE_ORB_LOCATION);
 
-    public AbstractExperienceOrbRenderer(EntityRendererProvider.Context context) {
+    public ModExperienceOrbRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
@@ -29,7 +29,7 @@ public class AbstractExperienceOrbRenderer<T extends AbstractExperienceOrb> exte
         return Mth.clamp(super.getBlockLightLevel(entity, blockPos) + 7, 0, 15);
     }
 
-    public void submit(AbstractExperienceOrbRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+    public void submit(ModExperienceOrbRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         poseStack.pushPose();
         int icon = state.icon;
 
@@ -69,12 +69,12 @@ public class AbstractExperienceOrbRenderer<T extends AbstractExperienceOrb> exte
     }
 
     @Override
-    public @NonNull AbstractExperienceOrbRenderState createRenderState() {
-        return new AbstractExperienceOrbRenderState();
+    public @NonNull ModExperienceOrbRenderState createRenderState() {
+        return new ModExperienceOrbRenderState();
     }
 
     @Override
-    public void extractRenderState(@NonNull T entity, @NonNull AbstractExperienceOrbRenderState state, float partialTicks) {
+    public void extractRenderState(@NonNull T entity, @NonNull ModExperienceOrbRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
         state.icon = entity.getIcon();
         state.color = entity.getExperienceType().color();

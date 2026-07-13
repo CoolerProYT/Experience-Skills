@@ -2,6 +2,7 @@ package com.coolerpromc.experienceskills.platform.services;
 
 import com.coolerpromc.experienceskills.api.IExperienceSkillsPlugin;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public interface IPlatformHelper {
@@ -14,6 +15,8 @@ public interface IPlatformHelper {
     default String getEnvironmentName() {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    Path getConfigDir();
 
     List<IExperienceSkillsPlugin> getPlugins();
 }

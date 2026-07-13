@@ -2,7 +2,7 @@ package com.coolerpromc.experienceskills;
 
 import com.coolerpromc.experienceskills.api.type.ExperienceTypeRegistry;
 import com.coolerpromc.experienceskills.client.hud.HudRenderer;
-import com.coolerpromc.experienceskills.client.renderer.entity.AbstractExperienceOrbRenderer;
+import com.coolerpromc.experienceskills.client.renderer.entity.ModExperienceOrbRenderer;
 import com.coolerpromc.experienceskills.entity.ModEntities;
 import com.coolerpromc.experienceskills.key.ModKeyMappings;
 import com.coolerpromc.experienceskills.platform.ServicesClient;
@@ -26,11 +26,8 @@ public class ExperienceSkillsClient {
     }
 
     public static void initRenderer(){
-        registerEntityRenderer(ModEntities.SPEED_EXPERIENCE_ORB.get(), AbstractExperienceOrbRenderer::new);
-
-        // TODO: Temporarily code to test API
         ExperienceTypeRegistry.REGISTERED_TYPES.forEach((s, registryHolder) -> {
-            registerEntityRenderer(Objects.requireNonNull(ModEntities.byName(s)).get(), AbstractExperienceOrbRenderer::new);
+            registerEntityRenderer(Objects.requireNonNull(ModEntities.byName(s)).get(), ModExperienceOrbRenderer::new);
         });
     }
 

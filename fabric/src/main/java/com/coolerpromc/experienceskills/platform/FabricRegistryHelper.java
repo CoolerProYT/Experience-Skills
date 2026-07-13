@@ -19,14 +19,19 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class FabricRegistryHelper implements IRegistryHelper {
+    public static final List<RegistryHandler<Attribute, Attribute>> ATTRIBUTES = new ArrayList<>();
+
     @Override
     public <T extends Block> RegistryHandler.Blocks<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> func, BlockBehaviour.Properties p) {
         ResourceKey<Block> key = IRegistryHelper.blockKey(name);
@@ -77,5 +82,26 @@ public class FabricRegistryHelper implements IRegistryHelper {
         Holder<ArgumentTypeInfo<?, ?>> holder = Registry.registerForHolder(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, id, info);
 
         return () -> holder;
+    }
+
+    @Override
+    public RegistryHandler<Identifier, Identifier> registerStat(String namespace, String name) {
+        Identifier id = Identifier.fromNamespaceAndPath(namespace, name);
+        Holder<Identifier> holder = Registry.registerForHolder(BuiltInRegistries.CUSTOM_STAT, id, id);
+        return () -> holder;
+    }
+
+    @Override
+    public RegistryHandler<Attribute, Attribute> registerAttribute(String namespace, String name, Attribute attribute) {
+        Identifier id = Identifier.fromNamespaceAndPath(namespace, name);
+        Holder<Attribute> holder = Registry.registerForHolder(BuiltInRegistries.ATTRIBUTE, id, attribute);
+        RegistryHandler<Attribute, Attribute> registryHandler = () -> holder;
+        ATTRIBUTES.add(registryHandler);
+        return registryHandler;
+    }
+
+    @Override
+    public List<RegistryHandler<Attribute, Attribute>> getRegisteredAttributes() {
+        return ATTRIBUTES;
     }
 }

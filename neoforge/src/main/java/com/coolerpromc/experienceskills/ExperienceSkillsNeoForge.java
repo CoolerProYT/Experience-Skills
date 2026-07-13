@@ -3,18 +3,19 @@ package com.coolerpromc.experienceskills;
 import com.coolerpromc.experienceskills.api.ExperienceSkillsPlugin;
 import com.coolerpromc.experienceskills.api.IExperienceSkillsPlugin;
 import com.coolerpromc.experienceskills.command.ModCommands;
-import com.coolerpromc.experienceskills.event.PlayerJoinEvent;
-import com.coolerpromc.experienceskills.event.StatAwardEvent;
+import com.coolerpromc.experienceskills.event.*;
 import com.coolerpromc.experienceskills.platform.NeoForgeRegistryHelper;
+import com.coolerpromc.experienceskills.stat.ModStats;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-import com.coolerpromc.experienceskills.event.LivingDeathEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
@@ -77,5 +78,25 @@ public class ExperienceSkillsNeoForge {
         ModCommands.register(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection());
     }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onBlock(BlockEvent.BreakEvent event) {
+        if (!event.isCanceled()){
+            PlayerBlockBreakEvent.afterBreak(event.getPlayer().level(), event.getPlayer(), event.getPos(), event.getState(), event.getLevel().getBlockEntity(event.getPos()));
+        }
+    }
 
+    @SubscribeEvent
+    public static void onServerStarted(net.neoforged.neoforge.event.server.ServerStartedEvent event) {
+        ServerStartedEvent.onServerStarted(event.getServer());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(net.neoforged.neoforge.event.tick.PlayerTickEvent.Post event) {
+        PlayerTickEvent.onPlayerTickEnd(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onBlockEntityPlace(BlockEvent.EntityPlaceEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) player.awardStat(ModStats.BLOCK_PLACED.get(), 1);
+    }
 }

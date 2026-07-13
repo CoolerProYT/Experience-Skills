@@ -5,7 +5,9 @@ import com.coolerpromc.experienceskills.api.IExperienceSkillsPlugin;
 import com.coolerpromc.experienceskills.platform.services.IPlatformHelper;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLPaths;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
@@ -26,6 +28,11 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     public boolean isDevelopmentEnvironment() {
 
         return !FMLLoader.getCurrent().isProduction();
+    }
+
+    @Override
+    public Path getConfigDir() {
+        return FMLPaths.CONFIGDIR.get();
     }
 
     @Override

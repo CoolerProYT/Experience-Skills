@@ -2,7 +2,7 @@ package com.coolerpromc.experienceskills.client.hud.custom;
 
 import com.coolerpromc.experienceskills.Constants;
 import com.coolerpromc.experienceskills.data.attachment.helper.AttachmentKey;
-import com.coolerpromc.experienceskills.entity.custom.AbstractExperienceOrb;
+import com.coolerpromc.experienceskills.entity.custom.ModExperienceOrb;
 import com.coolerpromc.experienceskills.platform.Services;
 import com.coolerpromc.experienceskills.api.type.ExperienceType;
 import com.coolerpromc.experienceskills.util.XpMath;
@@ -17,7 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 
-public record AbstractExperienceBarRenderer(Minecraft minecraft, int color, ExperienceType type, AttachmentKey<Integer> key) implements ContextualBarRenderer {
+public record ModExperienceBarRenderer(Minecraft minecraft, int color, ExperienceType type, AttachmentKey<Integer> key) implements ContextualBarRenderer {
     private static final Identifier EXPERIENCE_BAR_BACKGROUND_SPRITE = Constants.id("hud/experience_bar_background");
     private static final Identifier EXPERIENCE_BAR_PROGRESS_SPRITE = Constants.id("hud/experience_bar_progress");
 
@@ -30,7 +30,7 @@ public record AbstractExperienceBarRenderer(Minecraft minecraft, int color, Expe
         int points = Services.ATTACHMENT.get(player, key);
         int level = XpMath.getLevel(points);
         int xpNeededForNextLevel = XpMath.getXpNeededForNextLevel(level);
-        float progressFraction = AbstractExperienceOrb.getProgress(player, key);
+        float progressFraction = ModExperienceOrb.getProgress(player, key);
 
         if (xpNeededForNextLevel > 0) {
             int progress = (int)(progressFraction * 183.0F);
@@ -38,7 +38,9 @@ public record AbstractExperienceBarRenderer(Minecraft minecraft, int color, Expe
             if (progress > 0) {
                 graphics.blitSprite(RenderPipelines.GUI_TEXTURED, EXPERIENCE_BAR_PROGRESS_SPRITE, 182, 5, 0, 0, left, top, progress, 5, ARGB.color(0xFF, color));
             }
-            extractExperienceLevel(graphics, this.minecraft.font, level);
+            if (level > 0){
+                extractExperienceLevel(graphics, this.minecraft.font, level);
+            }
         }
     }
 

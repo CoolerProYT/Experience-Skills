@@ -1,7 +1,7 @@
 package com.coolerpromc.experienceskills.command.custom;
 
 import com.coolerpromc.experienceskills.command.argument.ExperienceTypeArgument;
-import com.coolerpromc.experienceskills.entity.custom.AbstractExperienceOrb;
+import com.coolerpromc.experienceskills.entity.custom.ModExperienceOrb;
 import com.coolerpromc.experienceskills.api.type.ExperienceType;
 import com.coolerpromc.experienceskills.util.TriPredicate;
 import com.mojang.brigadier.CommandDispatcher;
@@ -186,18 +186,18 @@ public class ExperienceSkillsCommand {
     }
 
     private enum Type {
-        POINTS("points", AbstractExperienceOrb::giveExperiencePoints, (p, a, experienceType) -> {
-            if (a >= AbstractExperienceOrb.getXpNeededForNextLevel(p, experienceType.getKey())) {
+        POINTS("points", ModExperienceOrb::giveExperiencePoints, (p, a, experienceType) -> {
+            if (a >= ModExperienceOrb.getXpNeededForNextLevel(p, experienceType.getKey())) {
                 return false;
             } else {
-                AbstractExperienceOrb.setPoints(p, a, experienceType.getKey());
+                ModExperienceOrb.setPoints(p, a, experienceType.getKey());
                 return true;
             }
-        }, AbstractExperienceOrb::getCurrentLevelPoints),
-        LEVELS("levels", AbstractExperienceOrb::giveExperienceLevels, (p, a, experienceType) -> {
-            AbstractExperienceOrb.setLevel(p, a, experienceType.getKey());
+        }, ModExperienceOrb::getCurrentLevelPoints),
+        LEVELS("levels", ModExperienceOrb::giveExperienceLevels, (p, a, experienceType) -> {
+            ModExperienceOrb.setLevel(p, a, experienceType.getKey());
             return true;
-        }, (p, e) -> AbstractExperienceOrb.getLevel(p, e.getKey()));
+        }, (p, e) -> ModExperienceOrb.getLevel(p, e.getKey()));
 
         public final TriConsumer<ServerPlayer, Integer, ExperienceType> add;
         public final TriPredicate<ServerPlayer, Integer, ExperienceType> set;

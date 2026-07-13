@@ -1,0 +1,3 @@
+classTweaker v1 official
+accessible field net/minecraft/world/entity/projectile/FishingHook currentState Lnet/minecraft/world/entity/projectile/FishingHook$FishHookState;
+accessible class net/minecraft/world/entity/projectile/FishingHook$FishHookState

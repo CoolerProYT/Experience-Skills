@@ -1,18 +1,18 @@
 package com.coolerpromc.experienceskills.entity.custom;
 
-import com.coolerpromc.experienceskills.data.attachment.ModDataAttachments;
+import com.coolerpromc.experienceskills.Constants;
+import com.coolerpromc.experienceskills.api.type.ExperienceType;
+import com.coolerpromc.experienceskills.config.ModCommonConfig;
 import com.coolerpromc.experienceskills.data.attachment.helper.AttachmentKey;
 import com.coolerpromc.experienceskills.entity.ModEntities;
-import com.coolerpromc.experienceskills.entity.helper.ExperienceOrbFactory;
-import com.coolerpromc.experienceskills.event.PlayerJoinEvent;
 import com.coolerpromc.experienceskills.platform.Services;
 import com.coolerpromc.experienceskills.platform.util.RegistryHandler;
-import com.coolerpromc.experienceskills.api.type.ExperienceType;
 import com.coolerpromc.experienceskills.util.XpMath;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -21,6 +21,8 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
@@ -34,41 +36,19 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
-public abstract class AbstractExperienceOrb extends Entity {
-    protected static final EntityDataAccessor<Integer> DATA_VALUE = SynchedEntityData.defineId(AbstractExperienceOrb.class, EntityDataSerializers.INT);
+public class ModExperienceOrb extends Entity {
+    protected static final EntityDataAccessor<Integer> DATA_VALUE = SynchedEntityData.defineId(ModExperienceOrb.class, EntityDataSerializers.INT);
     private int age = 0;
     private int health = 5;
     private int count = 1;
     private @Nullable Player followingPlayer;
     private final InterpolationHandler interpolation = new InterpolationHandler(this);
+    private final ExperienceType experienceType;
 
-    public AbstractExperienceOrb(EntityType<? extends AbstractExperienceOrb> type, Level level, Vec3 pos, Vec3 roughly, int value) {
-        this(type, level);
-        this.setPos(pos);
-        if (!level.isClientSide()) {
-            this.setYRot(this.random.nextFloat() * 360.0F);
-            Vec3 randomMovement = new Vec3(
-                (this.random.nextDouble() * 0.2 - 0.1) * 2.0, this.random.nextDouble() * 0.2 * 2.0, (this.random.nextDouble() * 0.2 - 0.1) * 2.0
-            );
-            if (roughly.lengthSqr() > 0.0 && roughly.dot(randomMovement) < 0.0) {
-                randomMovement = randomMovement.scale(-1.0);
-            }
-
-            double size = this.getBoundingBox().getSize();
-            this.setPos(pos.add(roughly.normalize().scale(size * 0.5)));
-            this.setDeltaMovement(randomMovement);
-            if (!level.noCollision(this.getBoundingBox())) {
-                this.unstuckIfPossible(size);
-            }
-        }
-
-        this.setValue(value);
-    }
-
-    public AbstractExperienceOrb(EntityType<? extends AbstractExperienceOrb> type, Level level) {
+    public ModExperienceOrb(EntityType<? extends ModExperienceOrb> type, Level level, ExperienceType experienceType) {
         super(type, level);
+        this.experienceType = experienceType;
     }
 
     protected void unstuckIfPossible(double maxDistance) {
@@ -176,23 +156,23 @@ public abstract class AbstractExperienceOrb extends Entity {
 
     private void scanForMerges() {
         if (this.level() instanceof ServerLevel) {
-            for (AbstractExperienceOrb orb : this.level().getEntities(EntityTypeTest.forClass(AbstractExperienceOrb.class), this.getBoundingBox().inflate(0.5), this::canMerge)) {
+            for (ModExperienceOrb orb : this.level().getEntities(EntityTypeTest.forClass(ModExperienceOrb.class), this.getBoundingBox().inflate(0.5), this::canMerge)) {
                 this.merge(orb);
             }
         }
     }
 
-    public static void award(ServerLevel level, Vec3 pos, int amount, ExperienceOrbFactory factory) {
-        awardWithDirection(level, pos, Vec3.ZERO, amount, factory);
+    public static void award(ServerLevel level, Vec3 pos, int amount, ExperienceType type) {
+        awardWithDirection(level, pos, Vec3.ZERO, amount, type);
     }
 
-    public static void awardWithDirection(ServerLevel level, Vec3 pos, Vec3 roughDirection, int amount, ExperienceOrbFactory factory) {
+    public static void awardWithDirection(ServerLevel level, Vec3 pos, Vec3 roughDirection, int amount, ExperienceType type) {
         while (amount > 0) {
             int newCount = getExperienceValue(amount);
             amount -= newCount;
-            AbstractExperienceOrb orb = factory.createExperienceOrb(level, pos, roughDirection, newCount);
+            ModExperienceOrb orb = ModEntities.byName(type.getSerializedName() + "_experience_orb").get().create(level, EntitySpawnReason.TRIGGERED);
             if (!tryMergeToExisting(level, pos, newCount) && orb.canAward()) {
-                level.addFreshEntity(orb);
+                orb.spawn(level, pos, roughDirection, newCount);
             }
         }
     }
@@ -200,9 +180,9 @@ public abstract class AbstractExperienceOrb extends Entity {
     private static boolean tryMergeToExisting(ServerLevel level, Vec3 pos, int value) {
         AABB box = AABB.ofSize(pos, 1.0, 1.0, 1.0);
         int id = level.getRandom().nextInt(40);
-        List<AbstractExperienceOrb> orbs = level.getEntities(EntityTypeTest.forClass(AbstractExperienceOrb.class), box, orbx -> canMerge(orbx, id, value));
+        List<ModExperienceOrb> orbs = level.getEntities(EntityTypeTest.forClass(ModExperienceOrb.class), box, orbx -> canMerge(orbx, id, value));
         if (!orbs.isEmpty()) {
-            AbstractExperienceOrb orb = orbs.getFirst();
+            ModExperienceOrb orb = orbs.getFirst();
             orb.count++;
             orb.age = 0;
             return true;
@@ -211,15 +191,15 @@ public abstract class AbstractExperienceOrb extends Entity {
         }
     }
 
-    private boolean canMerge(AbstractExperienceOrb orb) {
+    private boolean canMerge(ModExperienceOrb orb) {
         return orb != this && canMerge(orb, this.getId(), this.getValue());
     }
 
-    private static boolean canMerge(AbstractExperienceOrb orb, int id, int value) {
+    private static boolean canMerge(ModExperienceOrb orb, int id, int value) {
         return !orb.isRemoved() && (orb.getId() - id) % 40 == 0 && orb.getValue() == value;
     }
 
-    private void merge(AbstractExperienceOrb orb) {
+    private void merge(ModExperienceOrb orb) {
         this.count = this.count + orb.count;
         this.age = Math.min(this.age, orb.age);
         orb.discard();
@@ -272,10 +252,10 @@ public abstract class AbstractExperienceOrb extends Entity {
 
     @Override
     public void playerTouch(@NonNull Player player) {
-        if (player instanceof ServerPlayer) {
+        if (player instanceof ServerPlayer serverPlayer && !reachedMaxLevel(serverPlayer, this.experienceType.getKey(), this.experienceType.getMaxLevel())) {
             if (player.takeXpDelay == 0) {
                 player.takeXpDelay = 2;
-                this.addExperience(player, this.getValue(), this.getExperienceType().getKey());
+                this.addExperience(serverPlayer, this.getValue(), this.getExperienceType().getKey());
 
                 this.count--;
                 if (this.count == 0) {
@@ -293,7 +273,9 @@ public abstract class AbstractExperienceOrb extends Entity {
         this.entityData.set(DATA_VALUE, value);
     }
 
-    public abstract ExperienceType getExperienceType();
+    public ExperienceType getExperienceType(){
+        return this.experienceType;
+    }
 
     public int getIcon() {
         int value = this.getValue();
@@ -359,21 +341,64 @@ public abstract class AbstractExperienceOrb extends Entity {
         return this.interpolation;
     }
 
-    public void addExperience(LivingEntity entity, int amount, AttachmentKey<Integer> key){
+    public void addExperience(ServerPlayer entity, int amount, AttachmentKey<Integer> key){
         int original = Services.ATTACHMENT.get(entity, key);
         int newAmount = original + amount;
         Services.ATTACHMENT.set(entity, key, newAmount);
         float vol = newAmount > 30 ? 1.0F : newAmount / 30.0F;
-        entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PLAYER_LEVELUP, entity.getSoundSource(), vol * 0.75F, 1.0F);
 
         if (canAward()){
+            entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PLAYER_LEVELUP, entity.getSoundSource(), vol * 0.75F, 1.0F);
             updateSkillStatus(entity, key);
         }
     }
 
-    public abstract void updateSkillStatus(LivingEntity entity, AttachmentKey<Integer> key);
+    public void spawn(ServerLevel level, Vec3 pos, Vec3 roughly, int value){
+        if (!level.isClientSide()) {
+            this.setYRot(this.random.nextFloat() * 360.0F);
+            Vec3 randomMovement = new Vec3(
+                (this.random.nextDouble() * 0.2 - 0.1) * 2.0, this.random.nextDouble() * 0.2 * 2.0, (this.random.nextDouble() * 0.2 - 0.1) * 2.0
+            );
+            if (roughly.lengthSqr() > 0.0 && roughly.dot(randomMovement) < 0.0) {
+                randomMovement = randomMovement.scale(-1.0);
+            }
+
+            double size = this.getBoundingBox().getSize();
+            this.setPos(pos.add(roughly.normalize().scale(size * 0.5)));
+            this.setDeltaMovement(randomMovement);
+            if (!level.noCollision(this.getBoundingBox())) {
+                this.unstuckIfPossible(size);
+            }
+        }
+
+        this.setValue(value);
+
+        level.addFreshEntity(this);
+    }
+
+    public void updateSkillStatus(ServerPlayer entity, AttachmentKey<Integer> key){
+        int level = getLevel(entity, key);
+        double extraSpeed = level * ModCommonConfig.getConfigByPath(getExperienceType().getSerializedName()).get().incrementPerLevel();
+
+        AttributeInstance attr = entity.getAttribute(getExperienceType().getAttributeHolder());
+        if (attr != null){
+            Identifier id = Constants.id(getExperienceType().getSerializedName() + "_skill_bonus");
+            AttributeModifier modifier = new AttributeModifier(id, extraSpeed, getExperienceType().operation());
+            attr.removeModifier(id);
+            attr.addOrUpdateTransientModifier(modifier);
+            getExperienceType().onExperiencePointChange(entity, level);
+
+            if (!enabled()){
+                attr.removeModifier(id);
+            }
+        }
+    }
 
     public boolean canAward(){
+        return enabled();
+    }
+
+    public boolean enabled(){
         return getExperienceType().isEnabled();
     }
 
@@ -395,14 +420,14 @@ public abstract class AbstractExperienceOrb extends Entity {
     public static void setLevel(ServerPlayer entity, int level, AttachmentKey<Integer> key){
         int points = XpMath.getTotalForLevel(level);
         Services.ATTACHMENT.set(entity, key, points);
-        PlayerJoinEvent.onPlayerJoined(entity);
+        updateAllSkillStatus(entity);
     }
 
     public static void setPoints(ServerPlayer entity, int points, AttachmentKey<Integer> key){
         int level = getLevel(entity, key);
         int levelXpPoints = XpMath.getTotalForLevel(level);
         Services.ATTACHMENT.set(entity, key, levelXpPoints + points);
-        PlayerJoinEvent.onPlayerJoined(entity);
+        updateAllSkillStatus(entity);
     }
 
     public static void giveExperiencePoints(ServerPlayer player, Integer integer, ExperienceType experienceType) {
@@ -410,7 +435,7 @@ public abstract class AbstractExperienceOrb extends Entity {
         int original = Services.ATTACHMENT.get(player, key);
         int newAmount = original + integer;
         Services.ATTACHMENT.set(player, key, newAmount);
-        PlayerJoinEvent.onPlayerJoined(player);
+        updateAllSkillStatus(player);
     }
 
     public static void giveExperienceLevels(ServerPlayer player, Integer integer, ExperienceType experienceType) {
@@ -431,11 +456,16 @@ public abstract class AbstractExperienceOrb extends Entity {
     }
 
     public static void updateAllSkillStatus(ServerPlayer player){
-        for (RegistryHandler.Entities<? extends AbstractExperienceOrb> entities : ModEntities.ALL){
-            AbstractExperienceOrb orb = entities.get().create(player.level(), EntitySpawnReason.LOAD);
+        for (RegistryHandler.Entities<? extends ModExperienceOrb> entities : ModEntities.ALL){
+            ModExperienceOrb orb = entities.get().create(player.level(), EntitySpawnReason.LOAD);
             if (orb != null){
-                orb.updateSkillStatus(player, ModDataAttachments.INT_KEYS.get(Objects.requireNonNull(orb.getExperienceType().getKey()).id()));
+                orb.updateSkillStatus(player, orb.getExperienceType().getKey());
             }
         }
+    }
+
+    public static boolean reachedMaxLevel(ServerPlayer player, AttachmentKey<Integer> key, int maxLevel){
+        int level = getLevel(player, key);
+        return level >= maxLevel;
     }
 }

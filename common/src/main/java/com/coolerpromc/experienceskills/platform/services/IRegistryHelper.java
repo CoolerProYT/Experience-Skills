@@ -8,14 +8,17 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -31,6 +34,15 @@ public interface IRegistryHelper {
     <T extends Entity> RegistryHandler.Entities<T> registerEntity(String name, EntityType.EntityFactory<T> factory, MobCategory category, UnaryOperator<EntityType.Builder<T>> builder);
     <T> RegistryHandler<EntityDataSerializer<?>, EntityDataSerializer<T>> registerEntityDataSerializer(String name, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec);
     <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> RegistryHandler<ArgumentTypeInfo<?, ?>, ArgumentTypeInfo<A, T>> registerArgumentTypeInfo(String name, Class<A> clazz, ArgumentTypeInfo<A, T> info);
+    default RegistryHandler<Identifier, Identifier> registerStat(String name){
+        return registerStat(Constants.MODID, name);
+    }
+    RegistryHandler<Identifier, Identifier> registerStat(String namespace, String name);
+    default RegistryHandler<Attribute, Attribute> registerAttribute(String name, Attribute attribute){
+        return registerAttribute(Constants.MODID, name, attribute);
+    }
+    RegistryHandler<Attribute, Attribute> registerAttribute(String namespace, String name, Attribute attribute);
+    List<RegistryHandler<Attribute, Attribute>> getRegisteredAttributes();
 
     static ResourceKey<Block> blockKey(String name) {
         return ResourceKey.create(Registries.BLOCK, Constants.id(name));
