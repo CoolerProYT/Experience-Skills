@@ -1,0 +1,43 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
+    ],
+    "contact": {
+        "homepage": "https://fabricmc.net/",
+        "sources": "https://github.com/FabricMC/fabric-example-mod"
+    },
+    "license": "${license}",
+    "icon": "${mod_id}.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.coolerpromc.experienceskills.ExperienceSkillsFabric"
+        ],
+        "client": [
+            "com.coolerpromc.experienceskills.ExperienceSkillsClientFabric"
+        ],
+        "experience_skills_plugin": [
+            "com.coolerpromc.experienceskills.api.internal.InternalExperienceSkillsPlugin"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json",
+        "${mod_id}.fabric.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric-api": "*",
+        "minecraft": "~${minecraft_version}",
+        "java": ">=${java_version}",
+        "coolerconfig": ">=26.1.2.0"
+    },
+    "suggests": {
+        "another-mod": "*"
+    }
+}
+  
