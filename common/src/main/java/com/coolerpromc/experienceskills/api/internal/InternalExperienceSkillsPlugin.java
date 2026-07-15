@@ -43,7 +43,6 @@ public final class InternalExperienceSkillsPlugin implements IExperienceSkillsPl
     public static String SWIM_SPEED = "swim_speed";
     public static String FISHING_SPEED = "fishing_speed";
     public static String FISHING_LUCK = "fishing_luck";
-    public static String ATTACK_DAMAGE = "attack_damage";
     public static String TOUGHNESS = "toughness";
     public static String BLOCK_REACH = "block_reach";
     public static String ENTITY_REACH = "entity_reach";
@@ -59,7 +58,6 @@ public final class InternalExperienceSkillsPlugin implements IExperienceSkillsPl
         registry.register(SWIM_SPEED, new SkillsConfig(true, 0.05f, 100, 5, 5800104, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.WATER_WALKED.id()), ModAttributes.SWIM_SPEED.holder());
         registry.register(FISHING_SPEED, new SkillsConfig(true, 2, 1200, 5, 14599001, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.FISHING_TIME.id()), ModAttributes.LURE_SPEED.holder());
         registry.register(FISHING_LUCK, new SkillsConfig(true, 0.8f, 10, 5, 12045424, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.ITEMS_FISHED.id()), ModAttributes.FISHING_LUCK.holder());
-        registry.register(ATTACK_DAMAGE, new SkillsConfig(true, 0.01f, 200, 5, 0xE8C33A, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.DAMAGE_DEALT), Attributes.ATTACK_DAMAGE);
         registry.register(TOUGHNESS, new SkillsConfig(true, 0.02f, 100, 5, 0x8A8A8A, AttributeModifier.Operation.ADD_VALUE, 100, Stats.DAMAGE_TAKEN), Attributes.ARMOR_TOUGHNESS);
         registry.register(BLOCK_REACH, new SkillsConfig(true, 0.01f, 50, 5, 0x55D6D6, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.DAMAGE_TAKEN), Attributes.BLOCK_INTERACTION_RANGE);
         registry.register(ENTITY_REACH, new SkillsConfig(true, 0.01f, 20, 5, 0xD65555, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.ENTITY_KILLED.id()), Attributes.ENTITY_INTERACTION_RANGE);

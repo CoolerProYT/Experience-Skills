@@ -16,6 +16,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
@@ -79,7 +80,7 @@ public class ExperienceSkillsNeoForge {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onBlock(BlockEvent.BreakEvent event) {
+    public static void onBlock(BreakBlockEvent event) {
         if (!event.isCanceled()){
             PlayerBlockBreakEvent.afterBreak(event.getPlayer().level(), event.getPlayer(), event.getPos(), event.getState(), event.getLevel().getBlockEntity(event.getPos()));
         }
