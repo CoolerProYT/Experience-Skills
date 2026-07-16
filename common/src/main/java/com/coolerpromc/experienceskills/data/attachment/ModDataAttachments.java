@@ -29,6 +29,12 @@ public class ModDataAttachments {
         return key;
     }
 
+    public static @Nullable AttachmentKey<Integer> intById(String id){
+        if (!id.contains("_experience")) id = id.concat("_experience");
+
+        return INT_KEYS.get(id);
+    }
+
     public static @Nullable AttachmentKey<?> byId(String id){
         if (!id.contains("_experience")) id = id.concat("_experience");
 

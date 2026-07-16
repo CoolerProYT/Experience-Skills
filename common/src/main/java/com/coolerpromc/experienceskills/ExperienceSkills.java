@@ -26,6 +26,5 @@ public class ExperienceSkills {
         ModDataAttachments.init();
         ModEntityDataSerializers.init();
         ModArgumentTypeInfos.init();
-        ModAttributes.init();
     }
 }

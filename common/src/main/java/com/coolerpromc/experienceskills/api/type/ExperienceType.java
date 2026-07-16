@@ -7,7 +7,6 @@ import com.coolerpromc.experienceskills.data.attachment.helper.AttachmentKey;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Holder;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,28 +38,26 @@ public final class ExperienceType implements StringRepresentable {
      * The special entry representing the vanilla XP bar in the HUD cycle. It has no attachment, attribute
      * or orb and is not an earnable skill; most API listings exclude it.
      */
-    public static final ExperienceType VANILLA = register("vanilla", SkillsConfig.VANILLA, null, null, (player, level, experienceType) -> {});
+    public static final ExperienceType VANILLA = register("vanilla", SkillsConfig.VANILLA, null, (player, level, experienceType) -> {});
 
     private final String name;
     private final @NotNull SkillsConfig config;
-    private final @Nullable AttachmentKey<Integer> key;
     private final @Nullable Holder<Attribute> attributeHolder;
     private final IExperienceTypeRegistry.Handler handler;
 
     static {
-        ExperienceTypeRegistry.REGISTERED_TYPES.forEach((s, registryHolder) -> register(s, ModCommonConfig.getConfigByPath(s).orElse(registryHolder.config()), ModDataAttachments.INT_KEYS.get(s + "_experience"), registryHolder.attributeHolder(), registryHolder.handler()));
+        ExperienceTypeRegistry.REGISTERED_TYPES.forEach((s, registryHolder) -> register(s, ModCommonConfig.getConfigByPath(s).orElse(registryHolder.config()), registryHolder.attributeHolder(), registryHolder.handler()));
     }
 
-    private static ExperienceType register(String name, @NotNull SkillsConfig config, @Nullable AttachmentKey<Integer> key, Holder<Attribute> attributeHolder, IExperienceTypeRegistry.Handler handler){
-        ExperienceType type = new ExperienceType(name, config, key, attributeHolder, handler);
+    private static ExperienceType register(String name, @NotNull SkillsConfig config, Holder<Attribute> attributeHolder, IExperienceTypeRegistry.Handler handler){
+        ExperienceType type = new ExperienceType(name, config, attributeHolder, handler);
         ALL.add(type);
         return type;
     }
 
-    private ExperienceType(String name, @NotNull SkillsConfig config, @Nullable AttachmentKey<Integer> key, @Nullable Holder<Attribute> attributeHolder, IExperienceTypeRegistry.Handler handler){
+    private ExperienceType(String name, @NotNull SkillsConfig config, @Nullable Holder<Attribute> attributeHolder, IExperienceTypeRegistry.Handler handler){
         this.name = name;
         this.config = config;
-        this.key = key;
         this.attributeHolder = attributeHolder;
         this.handler = handler;
     }
@@ -92,7 +89,7 @@ public final class ExperienceType implements StringRepresentable {
      * @return the attachment holding a player's points for this skill, or {@code null} for {@link #VANILLA}
      */
     public @Nullable AttachmentKey<Integer> getKey() {
-        return key;
+        return ModDataAttachments.intById(this.name);
     }
 
     /**

@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_25",
   "mixins": [
     "FishingHookMixin",
-    "LivingEntityMixin",
-    "PlayerMixin"
+    "LivingEntityMixin"
   ],
   "server": [],
   "injectors": {

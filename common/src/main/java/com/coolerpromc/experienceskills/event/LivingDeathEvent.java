@@ -13,7 +13,7 @@ public class LivingDeathEvent {
     public static void onLivingDeath(LivingEntity livingEntity, DamageSource damageSource) {
         if (livingEntity instanceof ServerPlayer player){
             ExperienceTypeRegistry.REGISTERED_TYPES.forEach((s, registryHolder) -> {
-                int exp = ModExperienceOrb.getLevel(player, ModDataAttachments.INT_KEYS.get(s + "_experience"));
+                int exp = ModExperienceOrb.getLevel(player, ModDataAttachments.intById(s + "_experience"));
                 int xpToDrop = Math.min(exp * 7, 100);
 
                 ModExperienceOrb orb = ModEntities.byName(s + "_experience_orb").get().create(player.level(), EntitySpawnReason.TRIGGERED);

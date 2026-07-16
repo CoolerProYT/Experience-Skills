@@ -1,6 +1,8 @@
 package com.coolerpromc.experienceskills.platform.services;
 
 import com.coolerpromc.experienceskills.api.IExperienceSkillsPlugin;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -19,4 +21,6 @@ public interface IPlatformHelper {
     Path getConfigDir();
 
     List<IExperienceSkillsPlugin> getPlugins();
+
+    TagKey<Block> oreTag();
 }

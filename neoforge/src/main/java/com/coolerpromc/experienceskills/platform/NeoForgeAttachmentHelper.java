@@ -21,6 +21,14 @@ public class NeoForgeAttachmentHelper implements IAttachmentHelper {
     }
 
     @Override
+    public <T> T get(Entity entity, AttachmentKey<T> key, T fallback) {
+        if (REGISTERED.get(key) == null){
+            return fallback;
+        }
+        return get(entity, key);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T get(Entity entity, AttachmentKey<T> key) {
         Supplier<AttachmentType<T>> type = (Supplier<AttachmentType<T>>) (Object) REGISTERED.get(key);

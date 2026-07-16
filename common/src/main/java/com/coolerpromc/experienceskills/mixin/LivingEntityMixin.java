@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class LivingEntityMixin {
     @ModifyReturnValue(method = "createLivingAttributes", at = @At("RETURN"))
     private static AttributeSupplier.Builder addAttribute(AttributeSupplier.Builder builder) {
+        ModAttributes.init();
         Services.REGISTRY.getRegisteredAttributes().stream().map(RegistryHandler::holder).forEach(builder::add);
         return builder;
     }

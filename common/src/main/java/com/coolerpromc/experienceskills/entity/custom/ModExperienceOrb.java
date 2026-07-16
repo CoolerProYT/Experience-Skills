@@ -342,7 +342,7 @@ public class ModExperienceOrb extends Entity {
     }
 
     public void addExperience(ServerPlayer entity, int amount, AttachmentKey<Integer> key){
-        int original = Services.ATTACHMENT.get(entity, key);
+        int original = Services.ATTACHMENT.get(entity, key, 0);
         int newAmount = original + amount;
         Services.ATTACHMENT.set(entity, key, newAmount);
         float vol = newAmount > 30 ? 1.0F : newAmount / 30.0F;
@@ -403,12 +403,12 @@ public class ModExperienceOrb extends Entity {
     }
 
     public static int getLevel(LivingEntity entity, AttachmentKey<Integer> key) {
-        int points = Services.ATTACHMENT.get(entity, key);
+        int points = Services.ATTACHMENT.get(entity, key, 0);
         return XpMath.getLevel(points);
     }
 
     public static float getProgress(LivingEntity entity, AttachmentKey<Integer> key) {
-        int points = Services.ATTACHMENT.get(entity, key);
+        int points = Services.ATTACHMENT.get(entity, key, 0);
         return XpMath.getProgress(points);
     }
 
@@ -442,14 +442,14 @@ public class ModExperienceOrb extends Entity {
         AttachmentKey<Integer> key = experienceType.getKey();
         int level = getLevel(player, key);
         int targetLevel = level + integer;
-        int currentTotalXp = Services.ATTACHMENT.get(player, key);
+        int currentTotalXp = Services.ATTACHMENT.get(player, key, 0);
         int targetTotalXp = XpMath.getTotalForLevel(targetLevel);
         giveExperiencePoints(player, targetTotalXp - currentTotalXp, experienceType);
     }
 
     public static int getCurrentLevelPoints(ServerPlayer player, ExperienceType experienceType){
         AttachmentKey<Integer> key = experienceType.getKey();
-        int currentTotalXp = Services.ATTACHMENT.get(player, key);
+        int currentTotalXp = Services.ATTACHMENT.get(player, key, 0);
         int levelXp = XpMath.getTotalForLevel(getLevel(player, key));
 
         return currentTotalXp - levelXp;

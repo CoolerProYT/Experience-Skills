@@ -18,7 +18,7 @@ public class HudRenderer {
 
     static {
         ExperienceTypeRegistry.REGISTERED_TYPES.forEach((s, registryHolder) -> {
-            renderers.add(new ModExperienceBarRenderer(Minecraft.getInstance(), ModCommonConfig.getConfigByPath(s).orElse(registryHolder.config()).rgbColor(), ExperienceType.byName(s).orElse(null), ModDataAttachments.INT_KEYS.get(s + "_experience")));
+            renderers.add(new ModExperienceBarRenderer(Minecraft.getInstance(), ModCommonConfig.getConfigByPath(s).orElse(registryHolder.config()).rgbColor(), ExperienceType.byName(s).orElse(null), ModDataAttachments.intById(s + "_experience")));
         });
     }
 

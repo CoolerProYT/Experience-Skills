@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Player.class)
-public abstract class PlayerMixinFabric {
+public abstract class PlayerMixin {
     @Inject(method = "tick", at = @At("RETURN"))
     public void tick(CallbackInfo ci){
         PlayerTickEvent.onPlayerTickEnd((Player)(Object) this);

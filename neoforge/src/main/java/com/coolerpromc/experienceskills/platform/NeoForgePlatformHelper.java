@@ -3,9 +3,12 @@ package com.coolerpromc.experienceskills.platform;
 import com.coolerpromc.experienceskills.ExperienceSkillsNeoForge;
 import com.coolerpromc.experienceskills.api.IExperienceSkillsPlugin;
 import com.coolerpromc.experienceskills.platform.services.IPlatformHelper;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.common.Tags;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -38,5 +41,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public List<IExperienceSkillsPlugin> getPlugins() {
         return ExperienceSkillsNeoForge.PLUGINS;
+    }
+
+    @Override
+    public TagKey<Block> oreTag() {
+        return Tags.Blocks.ORES;
     }
 }

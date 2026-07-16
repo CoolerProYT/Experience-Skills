@@ -15,6 +15,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforgespi.language.ModFileScanData;
@@ -99,5 +100,12 @@ public class ExperienceSkillsNeoForge {
     @SubscribeEvent
     public static void onBlockEntityPlace(BlockEvent.EntityPlaceEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) player.awardStat(ModStats.BLOCK_PLACED.get(), 1);
+    }
+
+    @SubscribeEvent
+    public static void onBlockDrops(BlockDropsEvent event) {
+        if (!event.isCanceled()){
+            event.setCanceled(BlockDropEvent.handleBlockDrop(event.getLevel(), event.getPos(), event.getState(), event.getBlockEntity(), event.getDrops(), event.getBreaker(), event.getTool()));
+        }
     }
 }

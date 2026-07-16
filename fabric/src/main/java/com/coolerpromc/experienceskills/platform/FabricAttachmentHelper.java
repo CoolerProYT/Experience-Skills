@@ -23,6 +23,14 @@ public class FabricAttachmentHelper implements IAttachmentHelper {
     }
 
     @Override
+    public <T> T get(Entity entity, AttachmentKey<T> key, T fallback) {
+        if (REGISTERED.get(key) == null){
+            return fallback;
+        }
+        return get(entity, key);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T get(Entity entity, AttachmentKey<T> key) {
         return entity.getAttachedOrCreate((AttachmentType<T>) REGISTERED.get(key));

@@ -46,6 +46,7 @@ public final class InternalExperienceSkillsPlugin implements IExperienceSkillsPl
     public static String TOUGHNESS = "toughness";
     public static String BLOCK_REACH = "block_reach";
     public static String ENTITY_REACH = "entity_reach";
+    public static String MINING_LUCK = "mining_luck";
 
     @Override
     public void registerExperienceType(IExperienceTypeRegistry registry) {
@@ -61,6 +62,7 @@ public final class InternalExperienceSkillsPlugin implements IExperienceSkillsPl
         registry.register(TOUGHNESS, new SkillsConfig(true, 0.02f, 100, 5, 0x8A8A8A, AttributeModifier.Operation.ADD_VALUE, 100, Stats.DAMAGE_TAKEN), Attributes.ARMOR_TOUGHNESS);
         registry.register(BLOCK_REACH, new SkillsConfig(true, 0.01f, 50, 5, 0x55D6D6, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.DAMAGE_TAKEN), Attributes.BLOCK_INTERACTION_RANGE);
         registry.register(ENTITY_REACH, new SkillsConfig(true, 0.01f, 20, 5, 0xD65555, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.ENTITY_KILLED.id()), Attributes.ENTITY_INTERACTION_RANGE);
+        registry.register(MINING_LUCK, new SkillsConfig(true, 0.2f, 20, 5, 9412536, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.ORE_MINED.id()), ModAttributes.MINING_LUCK.holder());
 
         this.registerFromConfigFiles(registry);
     }

@@ -15,6 +15,7 @@ public class ModStats {
     public static final RegistryHandler<Identifier, Identifier> ITEMS_FISHED = Services.REGISTRY.registerStat("items_fished");
     public static final RegistryHandler<Identifier, Identifier> BLOCK_INTERACTED = Services.REGISTRY.registerStat("block_interacted");
     public static final RegistryHandler<Identifier, Identifier> BLOCK_PLACED = Services.REGISTRY.registerStat("block_placed");
+    public static final RegistryHandler<Identifier, Identifier> ORE_MINED = Services.REGISTRY.registerStat("ore_mined");
 
     public static void init(){
         Constants.LOGGER.info("Registering stats.");
