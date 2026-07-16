@@ -11,6 +11,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.apache.logging.log4j.util.Lazy;
@@ -44,5 +45,11 @@ public class ExperienceSkillsClientNeoForge {
     @SubscribeEvent
     public static void onClientTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
         ClientTickEvent.onClientTickEnd(Minecraft.getInstance());
+    }
+
+    @SubscribeEvent
+    public static void onRegisterColorHandlersItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        ExperienceSkillsClient.initItemTintSource();
+        ServicesClient.REGISTRY.applyItemTintSourceRegistrations(event::register);
     }
 }

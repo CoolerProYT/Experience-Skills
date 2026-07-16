@@ -2,12 +2,16 @@ package com.coolerpromc.experienceskills.platform;
 
 import com.coolerpromc.experienceskills.Constants;
 import com.coolerpromc.experienceskills.platform.services.IRegistryHelper;
+import com.coolerpromc.experienceskills.platform.util.CreativeTabOutput;
 import com.coolerpromc.experienceskills.platform.util.RegistryHandler;
 import com.mojang.brigadier.arguments.ArgumentType;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.Identifier;
@@ -15,7 +19,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
@@ -24,12 +30,16 @@ import net.neoforged.neoforge.registries.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public class NeoForgeRegistryHelper implements IRegistryHelper {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Constants.MODID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Constants.MODID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, Constants.MODID);
+    public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Constants.MODID);
     public static final DeferredRegister.Entities ENTITIES = DeferredRegister.createEntities(Constants.MODID);
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Constants.MODID);
     public static final DeferredRegister<EntityDataSerializer<?>> ENTITY_DATA_SERIALIZERS = DeferredRegister.create(NeoForgeRegistries.ENTITY_DATA_SERIALIZERS, Constants.MODID);
@@ -55,6 +65,18 @@ public class NeoForgeRegistryHelper implements IRegistryHelper {
     @Override
     public <T extends Entity> RegistryHandler.Entities<T> registerEntity(String name, EntityType.EntityFactory<T> factory, MobCategory category, UnaryOperator<EntityType.Builder<T>> builder) {
         DeferredHolder<EntityType<?>, EntityType<T>> deferredHolder = ENTITIES.registerEntityType(name, factory, category, builder);
+        return () -> deferredHolder;
+    }
+
+    @Override
+    public RegistryHandler<CreativeModeTab, CreativeModeTab> registerCreativeTab(String name, Supplier<ItemStack> icon, Component title, BiConsumer<CreativeTabOutput, CreativeModeTab.ItemDisplayParameters> entries) {
+        DeferredHolder<CreativeModeTab, CreativeModeTab> deferredHolder = CREATIVE_TABS.register(name, () -> CreativeModeTab.builder().icon(icon).title(title).displayItems((p, o) -> entries.accept(o::accept, p)).build());
+        return () -> deferredHolder;
+    }
+
+    @Override
+    public <T> RegistryHandler.Components<T> registerDataComponent(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {
+        DeferredHolder<DataComponentType<?>, DataComponentType<T>> deferredHolder = DATA_COMPONENTS.registerComponentType(name, builder);
         return () -> deferredHolder;
     }
 
@@ -110,6 +132,8 @@ public class NeoForgeRegistryHelper implements IRegistryHelper {
     public static void register(IEventBus eventBus){
         BLOCKS.register(eventBus);
         ITEMS.register(eventBus);
+        CREATIVE_TABS.register(eventBus);
+        DATA_COMPONENTS.register(eventBus);
         ENTITIES.register(eventBus);
         ATTACHMENTS.register(eventBus);
         ENTITY_DATA_SERIALIZERS.register(eventBus);

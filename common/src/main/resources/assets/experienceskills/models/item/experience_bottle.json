@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "experienceskills:item/experience_bottle",
+    "layer1": "experienceskills:item/experience_bottle_layer1",
+    "layer2": "experienceskills:item/experience_bottle_layer2"
+  }
+}

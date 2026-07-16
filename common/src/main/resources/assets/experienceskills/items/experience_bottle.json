@@ -1,0 +1,20 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "experienceskills:item/experience_bottle",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      },
+      {
+        "type": "experienceskills:experience_bottle",
+        "defaultColor": -1
+      },
+      {
+        "type": "experienceskills:experience_bottle_border",
+        "defaultColor": -1
+      }
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 package com.coolerpromc.experienceskills.platform.util;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
@@ -61,5 +62,8 @@ public interface RegistryHandler<R, T extends R> extends Supplier<T> {
     }
 
     interface Entities<E extends Entity> extends RegistryHandler<EntityType<?>, EntityType<E>>{
+    }
+
+    interface Components<T> extends RegistryHandler<DataComponentType<?>, DataComponentType<T>>{
     }
 }

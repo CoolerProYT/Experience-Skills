@@ -1,6 +1,4 @@
-## 26.1.2.1
-- Removed duplicated skill that using same attribute (attack damage)
+## 26.1.2.2
+- Added `Experience Bottle` for each skill/experience type
 
-### NeoForge
-- Updated to `26.1.2.80`
-- Replaced old `BlockEvent.BreakEvent` with the new `BreakBlockEvent`
+Notes: Some of the skill might be removed and replace by separated skill in the future

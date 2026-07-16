@@ -3,6 +3,7 @@ package com.coolerpromc.experienceskills.entity;
 import com.coolerpromc.experienceskills.Constants;
 import com.coolerpromc.experienceskills.api.type.ExperienceTypeRegistry;
 import com.coolerpromc.experienceskills.entity.custom.ModExperienceOrb;
+import com.coolerpromc.experienceskills.entity.custom.ModThrownExperienceBottle;
 import com.coolerpromc.experienceskills.platform.Services;
 import com.coolerpromc.experienceskills.platform.util.RegistryHandler;
 import net.minecraft.world.entity.EntityType;
@@ -14,6 +15,8 @@ import java.util.function.UnaryOperator;
 
 public class ModEntities {
     public static final List<RegistryHandler.Entities<? extends ModExperienceOrb>> ALL = new ArrayList<>();
+
+    public static final RegistryHandler.Entities<ModThrownExperienceBottle> EXPERIENCE_BOTTLE = Services.REGISTRY.registerEntity("experience_bottle", ModThrownExperienceBottle::new, MobCategory.MISC, b -> b.noLootTable().sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10));
 
     public static <T extends ModExperienceOrb> RegistryHandler.Entities<T> register(String name, EntityType.EntityFactory<T> factory, MobCategory category, UnaryOperator<EntityType.Builder<T>> builder){
         RegistryHandler.Entities<T> entities = Services.REGISTRY.registerEntity(name, factory, category, builder);

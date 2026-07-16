@@ -75,13 +75,17 @@ publishMods {
     curseforge {
         projectId = "1611330"
         accessToken = findProperty("CF_TOKEN")
-        changelogType = "markdown"
         minecraftVersions.add(minecraft_version)
+
+        client = true
+        server = true
     }
 
     modrinth {
         projectId = 'MZGunaW2'
         accessToken = findProperty("MODRINTH_TOKEN")
         minecraftVersions.add(minecraft_version)
+
+        environment = CLIENT_AND_SERVER
     }
 }

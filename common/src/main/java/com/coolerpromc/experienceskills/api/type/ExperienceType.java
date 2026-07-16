@@ -4,7 +4,12 @@ import com.coolerpromc.experienceskills.config.ModCommonConfig;
 import com.coolerpromc.experienceskills.config.value.SkillsConfig;
 import com.coolerpromc.experienceskills.data.attachment.ModDataAttachments;
 import com.coolerpromc.experienceskills.data.attachment.helper.AttachmentKey;
+import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Holder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -138,6 +143,8 @@ public final class ExperienceType implements StringRepresentable {
     }
 
     private static final Map<String, ExperienceType> BY_NAME = ALL.stream().collect(Collectors.toMap(ExperienceType::getSerializedName, e -> e));
+    public static final Codec<ExperienceType> CODEC = Codec.stringResolver(StringRepresentable::getSerializedName, BY_NAME::get);
+    public static final StreamCodec<ByteBuf, ExperienceType> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(BY_NAME::get, ExperienceType::getSerializedName);
 
     /**
      * Looks up a skill by its id.
@@ -147,5 +154,15 @@ public final class ExperienceType implements StringRepresentable {
      */
     public static Optional<ExperienceType> byName(String name) {
         return Optional.ofNullable(BY_NAME.get(name));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj;
+    }
+
+    @Override
+    public int hashCode() {
+        return System.identityHashCode(this);
     }
 }

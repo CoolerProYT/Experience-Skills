@@ -5,6 +5,7 @@ import com.coolerpromc.experienceskills.platform.ServicesClient;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 
 public class ExperienceSkillsClientFabric implements ClientModInitializer {
@@ -13,6 +14,7 @@ public class ExperienceSkillsClientFabric implements ClientModInitializer {
         ExperienceSkillsClient.initAll();
         ServicesClient.REGISTRY.applyEntityRendererRegistrations(EntityRenderers::register);
         ServicesClient.REGISTRY.applyGuiLayerRegistrations((id, layer) -> HudElementRegistry.addLast(id, layer::render));
+        ServicesClient.REGISTRY.applyItemTintSourceRegistrations(ItemTintSources.ID_MAPPER::put);
 
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvent::onClientTickEnd);
     }

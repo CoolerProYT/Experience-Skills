@@ -1,6 +1,8 @@
 {
   "commands.experienceskills.arguments.enum.invalid": "Experience Type must be one of %1$s, found %2$s",
   "message.experienceskills.toggle_hud": "Now showing §a%s experience bar",
+  "creativeTabs.experieceskills.bottle": "Experience Skills: Bottle",
+  "item.experienceskills.experience_bottle": "Experience Bottle",
   "attribute.name.lure_speed": "Lure Speed",
   "attribute.name.fishing_luck": "Fishing Speed",
   "attribute.name.swim_speed": "Swim Speed",
@@ -13,5 +15,17 @@
   "stat.experienceskills.entity_killed": "Entity Killed",
   "stat.experienceskills.block_interacted": "Block Interacted (Place/Break)",
   "stat.experienceskills.block_placed": "Block Placed",
-  "key.experienceskills.cycle_contextual_bar": "Cycle Contextual Bar"
+  "key.experienceskills.cycle_contextual_bar": "Cycle Contextual Bar",
+  "skill.experienceskills.walking_speed": "Walking Speed",
+  "skill.experienceskills.breaking_speed": "Breaking Speed",
+  "skill.experienceskills.strength": "Strength",
+  "skill.experienceskills.vitality": "Vitality",
+  "skill.experienceskills.jump": "Jump",
+  "skill.experienceskills.oxygen": "Oxygen",
+  "skill.experienceskills.swim_speed": "Swim Speed",
+  "skill.experienceskills.fishing_speed": "Fishing Speed",
+  "skill.experienceskills.fishing_luck": "Fishing Luck",
+  "skill.experienceskills.toughness": "Toughness",
+  "skill.experienceskills.block_reach": "Block Reach",
+  "skill.experienceskills.entity_reach": "Entity Reach"
 }
