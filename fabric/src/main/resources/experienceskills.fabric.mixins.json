@@ -15,6 +15,9 @@
   },
   "overwrites": {
     "requireAnnotations": true
-  }
+  },
+  "client": [
+    "GuiMixin"
+  ]
 }
   

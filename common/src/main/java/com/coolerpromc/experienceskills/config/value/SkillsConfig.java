@@ -24,8 +24,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
  * @param stat               the {@link Identifier} of the <b>custom</b> stat that drives this skill; the
  *                           skill gains XP as this stat increases. Registry stat types (blocks mined,
  *                           items used) cannot be used directly — pool them into a custom stat first.
+ * @param dropOnDeath        whether the experiences should be dropped like vanilla on player death.
  */
-public record SkillsConfig(boolean enabled, float incrementPerLevel, int xpAwardActionCount, int xpPointToAward, int rgbColor, AttributeModifier.Operation operation, int maxLevel, Identifier stat) {
+public record SkillsConfig(boolean enabled, float incrementPerLevel, int xpAwardActionCount, int xpPointToAward, int rgbColor, AttributeModifier.Operation operation, int maxLevel, Identifier stat, boolean dropOnDeath) {
     /** Codec used to read and write a skill's configuration to disk. */
     public static final Codec<SkillsConfig> CODEC = RecordCodecBuilder.create(i -> i.group(
         Codec.BOOL.fieldOf("enabled").forGetter(SkillsConfig::enabled),
@@ -35,9 +36,10 @@ public record SkillsConfig(boolean enabled, float incrementPerLevel, int xpAward
         Codec.INT.fieldOf("rgbColor").forGetter(SkillsConfig::rgbColor),
         AttributeModifier.Operation.CODEC.fieldOf("operation").forGetter(SkillsConfig::operation),
         Codec.INT.fieldOf("maxLevel").forGetter(SkillsConfig::maxLevel),
-        Identifier.CODEC.fieldOf("stat").forGetter(SkillsConfig::stat)
+        Identifier.CODEC.fieldOf("stat").forGetter(SkillsConfig::stat),
+        Codec.BOOL.fieldOf("dropOnDeath").forGetter(SkillsConfig::dropOnDeath)
     ).apply(i, SkillsConfig::new));
 
     /** Placeholder configuration for the special {@code vanilla} HUD entry; not a real, earnable skill. */
-    public static final SkillsConfig VANILLA = new SkillsConfig(true, 0, 0, 0, -1, AttributeModifier.Operation.ADD_VALUE, Integer.MAX_VALUE, Constants.id("empty"));
+    public static final SkillsConfig VANILLA = new SkillsConfig(true, 0, 0, 0, -1, AttributeModifier.Operation.ADD_VALUE, Integer.MAX_VALUE, Constants.id("empty"), true);
 }

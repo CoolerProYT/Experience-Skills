@@ -13,6 +13,9 @@ public class PlayerBlockBreakEvent {
     public static void afterBreak(Level level, Player player, BlockPos pos, BlockState blockState, @Nullable BlockEntity blockEntity) {
         if (player instanceof ServerPlayer serverPlayer){
             serverPlayer.awardStat(ModStats.BLOCK_BROKEN.get(), 1);
+            if (serverPlayer.isInWater()){
+                serverPlayer.awardStat(ModStats.BLOCK_MINED_IN_WATER.get(), 1);
+            }
         }
     }
 }

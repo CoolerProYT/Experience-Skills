@@ -31,7 +31,7 @@ public abstract class GuiMixin {
             target = "Lnet/minecraft/client/gui/contextualbar/ContextualBarRenderer;extractExperienceLevel(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;I)V"
         )
     )
-    private static boolean wrapExtractExpLevel(GuiGraphicsExtractor graphics, Font font, int level) {
+    private static boolean wrapExtractExpLevel(GuiGraphicsExtractor graphics, Font font, int experienceLevel) {
         return shouldRender();
     }
 

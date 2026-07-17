@@ -6,6 +6,7 @@ import com.coolerpromc.experienceskills.stat.ModStats;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -21,9 +22,22 @@ public class BlockDropEvent {
         if (state.is(Services.PLATFORM.oreTag()) && breaker instanceof ServerPlayer player){
             player.awardStat(ModStats.ORE_MINED.get(), 1);
             double extra = player.getAttribute(ModAttributes.MINING_LUCK.holder()).getValue();
-            System.out.println(drops);
             for (ItemEntity drop : drops) {
                 drop.getItem().setCount((int) (drop.getItem().getCount() + extra));
+            }
+        }
+        if (breaker instanceof ServerPlayer player && tool.isCorrectToolForDrops(state)){
+            if (tool.is(ItemTags.PICKAXES)){
+                player.awardStat(ModStats.BLOCK_MINED_WITH_PICKAXE.get());
+            }
+            if (tool.is(ItemTags.SHOVELS)){
+                player.awardStat(ModStats.BLOCK_MINED_WITH_SHOVEL.get());
+            }
+            if (tool.is(ItemTags.AXES)){
+                player.awardStat(ModStats.BLOCK_MINED_WITH_AXE.get());
+            }
+            if (tool.is(ItemTags.HOES)){
+                player.awardStat(ModStats.BLOCK_MINED_WITH_HOE.get());
             }
         }
         return false;

@@ -1,5 +1,6 @@
 package com.coolerpromc.experienceskills.event;
 
+import com.coolerpromc.experienceskills.api.type.ExperienceType;
 import com.coolerpromc.experienceskills.api.type.ExperienceTypeRegistry;
 import com.coolerpromc.experienceskills.data.attachment.ModDataAttachments;
 import com.coolerpromc.experienceskills.entity.ModEntities;
@@ -17,7 +18,7 @@ public class LivingDeathEvent {
                 int xpToDrop = Math.min(exp * 7, 100);
 
                 ModExperienceOrb orb = ModEntities.byName(s + "_experience_orb").get().create(player.level(), EntitySpawnReason.TRIGGERED);
-                if (orb != null && registryHolder.config().enabled() && xpToDrop > 0){
+                if (orb != null && registryHolder.config().enabled() && ExperienceType.byName(s).get().getConfig().dropOnDeath() && xpToDrop > 0){
                     orb.spawn(player.level(), player.position(), player.position().add(1, 0, 1), xpToDrop);
                 }
             });

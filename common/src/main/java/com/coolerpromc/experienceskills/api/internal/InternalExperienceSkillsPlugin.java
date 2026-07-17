@@ -35,7 +35,6 @@ import java.util.List;
 @ExperienceSkillsPlugin
 public final class InternalExperienceSkillsPlugin implements IExperienceSkillsPlugin {
     public static String WALKING_SPEED = "walking_speed";
-    public static String BREAKING_SPEED = "breaking_speed";
     public static String STRENGTH = "strength";
     public static String VITALITY = "vitality";
     public static String JUMP = "jump";
@@ -47,22 +46,31 @@ public final class InternalExperienceSkillsPlugin implements IExperienceSkillsPl
     public static String BLOCK_REACH = "block_reach";
     public static String ENTITY_REACH = "entity_reach";
     public static String MINING_LUCK = "mining_luck";
+    public static String SUBMERGED_BREAKING_SPEED = "submerged_breaking_speed";
+    public static String PICKAXE_BREAKING_SPEED = "pickaxe_breaking_speed";
+    public static String SHOVEL_BREAKING_SPEED = "shovel_breaking_speed";
+    public static String AXE_BREAKING_SPEED = "axe_breaking_speed";
+    public static String HOE_BREAKING_SPEED = "hoe_breaking_speed";
 
     @Override
     public void registerExperienceType(IExperienceTypeRegistry registry) {
-        registry.register(WALKING_SPEED, new SkillsConfig(true, 0.02f,  100,  5, 16711680, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_WALKED.id()), Attributes.MOVEMENT_SPEED);
-        registry.register(BREAKING_SPEED, new SkillsConfig(true, 0.02f, 10, 5, 0x00FF00, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_BROKEN.id()), Attributes.BLOCK_BREAK_SPEED);
-        registry.register(STRENGTH, new SkillsConfig(true, 0.02f, 20, 5, 0xFF5555, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.ENTITY_KILLED.id()), Attributes.ATTACK_DAMAGE);
-        registry.register(VITALITY, new SkillsConfig(true, 0.01f, 100, 5, 14060262, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.DAMAGE_TAKEN), Attributes.MAX_HEALTH);
-        registry.register(JUMP, new SkillsConfig(true, 0.02f, 100, 5, 14392458, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.JUMP), Attributes.JUMP_STRENGTH, InternalExperienceSkillsPlugin::handleJump);
-        registry.register(OXYGEN, new SkillsConfig(true, 0.05f, 1200, 5, 5745663, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.UNDER_WATER_TIME.id()), Attributes.OXYGEN_BONUS);
-        registry.register(SWIM_SPEED, new SkillsConfig(true, 0.05f, 100, 5, 5800104, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.WATER_WALKED.id()), ModAttributes.SWIM_SPEED.holder());
-        registry.register(FISHING_SPEED, new SkillsConfig(true, 2, 1200, 5, 14599001, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.FISHING_TIME.id()), ModAttributes.LURE_SPEED.holder());
-        registry.register(FISHING_LUCK, new SkillsConfig(true, 0.8f, 10, 5, 12045424, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.ITEMS_FISHED.id()), ModAttributes.FISHING_LUCK.holder());
-        registry.register(TOUGHNESS, new SkillsConfig(true, 0.02f, 100, 5, 0x8A8A8A, AttributeModifier.Operation.ADD_VALUE, 100, Stats.DAMAGE_TAKEN), Attributes.ARMOR_TOUGHNESS);
-        registry.register(BLOCK_REACH, new SkillsConfig(true, 0.01f, 50, 5, 0x55D6D6, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.DAMAGE_TAKEN), Attributes.BLOCK_INTERACTION_RANGE);
-        registry.register(ENTITY_REACH, new SkillsConfig(true, 0.01f, 20, 5, 0xD65555, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.ENTITY_KILLED.id()), Attributes.ENTITY_INTERACTION_RANGE);
-        registry.register(MINING_LUCK, new SkillsConfig(true, 0.2f, 20, 5, 9412536, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.ORE_MINED.id()), ModAttributes.MINING_LUCK.holder());
+        registry.register(WALKING_SPEED, new SkillsConfig(true, 0.02f,  100,  5, 16711680, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_WALKED.id(), true), Attributes.MOVEMENT_SPEED);
+        registry.register(STRENGTH, new SkillsConfig(true, 0.02f, 20, 5, 0xFF5555, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.ENTITY_KILLED.id(), true), Attributes.ATTACK_DAMAGE);
+        registry.register(VITALITY, new SkillsConfig(true, 0.01f, 100, 5, 14060262, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.DAMAGE_TAKEN, true), Attributes.MAX_HEALTH);
+        registry.register(JUMP, new SkillsConfig(true, 0.02f, 100, 5, 14392458, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.JUMP, true), Attributes.JUMP_STRENGTH, InternalExperienceSkillsPlugin::handleJump);
+        registry.register(OXYGEN, new SkillsConfig(true, 0.05f, 1200, 5, 5745663, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.UNDER_WATER_TIME.id(), true), Attributes.OXYGEN_BONUS);
+        registry.register(SWIM_SPEED, new SkillsConfig(true, 0.05f, 100, 5, 5800104, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.WATER_WALKED.id(), true), ModAttributes.SWIM_SPEED.holder());
+        registry.register(FISHING_SPEED, new SkillsConfig(true, 2, 1200, 5, 14599001, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.FISHING_TIME.id(), true), ModAttributes.LURE_SPEED.holder());
+        registry.register(FISHING_LUCK, new SkillsConfig(true, 0.8f, 10, 5, 12045424, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.ITEMS_FISHED.id(), true), ModAttributes.FISHING_LUCK.holder());
+        registry.register(TOUGHNESS, new SkillsConfig(true, 0.02f, 100, 5, 0x8A8A8A, AttributeModifier.Operation.ADD_VALUE, 100, Stats.DAMAGE_TAKEN, true), Attributes.ARMOR_TOUGHNESS);
+        registry.register(BLOCK_REACH, new SkillsConfig(true, 0.01f, 50, 5, 0x55D6D6, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.DAMAGE_TAKEN, true), Attributes.BLOCK_INTERACTION_RANGE);
+        registry.register(ENTITY_REACH, new SkillsConfig(true, 0.01f, 20, 5, 0xD65555, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.ENTITY_KILLED.id(), true), Attributes.ENTITY_INTERACTION_RANGE);
+        registry.register(MINING_LUCK, new SkillsConfig(true, 0.2f, 20, 5, 9412536, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.ORE_MINED.id(), true), ModAttributes.MINING_LUCK.holder());
+        registry.register(SUBMERGED_BREAKING_SPEED, new SkillsConfig(true, 0.02f, 20, 5, 0x9cfff3, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_IN_WATER.id(), true), Attributes.SUBMERGED_MINING_SPEED);
+        registry.register(PICKAXE_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 20, 5, 0xfcba03, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_PICKAXE.id(), true), ModAttributes.PICKAXE_MINING_SPEED.holder());
+        registry.register(SHOVEL_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 20, 5, 0xc2e35f, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_SHOVEL.id(), true), ModAttributes.SHOVEL_MINING_SPEED.holder());
+        registry.register(AXE_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 20, 5, 0x58dbba, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_AXE.id(), true), ModAttributes.AXE_MINING_SPEED.holder());
+        registry.register(HOE_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 20, 5, 0xab79e0, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_HOE.id(), true), ModAttributes.HOE_MINING_SPEED.holder());
 
         this.registerFromConfigFiles(registry);
     }

@@ -2,10 +2,7 @@ package com.coolerpromc.experienceskills;
 
 import com.coolerpromc.experienceskills.api.IExperienceSkillsPlugin;
 import com.coolerpromc.experienceskills.command.ModCommands;
-import com.coolerpromc.experienceskills.event.LivingDeathEvent;
-import com.coolerpromc.experienceskills.event.PlayerBlockBreakEvent;
-import com.coolerpromc.experienceskills.event.PlayerJoinEvent;
-import com.coolerpromc.experienceskills.event.ServerStartedEvent;
+import com.coolerpromc.experienceskills.event.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -31,5 +28,6 @@ public class ExperienceSkillsFabric implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(ModCommands::register);
         PlayerBlockBreakEvents.AFTER.register(PlayerBlockBreakEvent::afterBreak);
         ServerLifecycleEvents.SERVER_STARTED.register(ServerStartedEvent::onServerStarted);
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> PlayerRespawnEvent.onPlayerRespawn(newPlayer));
     }
 }

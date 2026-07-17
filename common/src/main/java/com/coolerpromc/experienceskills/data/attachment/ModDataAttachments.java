@@ -1,6 +1,7 @@
 package com.coolerpromc.experienceskills.data.attachment;
 
 import com.coolerpromc.experienceskills.Constants;
+import com.coolerpromc.experienceskills.api.type.ExperienceType;
 import com.coolerpromc.experienceskills.api.type.ExperienceTypeRegistry;
 import com.coolerpromc.experienceskills.platform.Services;
 import com.coolerpromc.experienceskills.data.attachment.helper.AttachmentKey;
@@ -49,7 +50,7 @@ public class ModDataAttachments {
     public static void init(){
         Constants.LOGGER.info("Registering data attachments.");
 
-        ExperienceTypeRegistry.REGISTERED_TYPES.forEach((s, _) -> register(s + "_experience", Codec.INT, ByteBufCodecs.INT, () -> 0, false));
+        ExperienceTypeRegistry.REGISTERED_TYPES.forEach((s, holder) -> register(s + "_experience", Codec.INT, ByteBufCodecs.INT, () -> 0, !ExperienceType.byName(s).get().getConfig().dropOnDeath()));
 
         Services.ATTACHMENT.register();
     }

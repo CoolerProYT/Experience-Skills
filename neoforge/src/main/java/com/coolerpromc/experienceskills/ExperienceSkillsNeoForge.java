@@ -108,4 +108,9 @@ public class ExperienceSkillsNeoForge {
             event.setCanceled(BlockDropEvent.handleBlockDrop(event.getLevel(), event.getPos(), event.getState(), event.getBlockEntity(), event.getDrops(), event.getBreaker(), event.getTool()));
         }
     }
+
+    @SubscribeEvent
+    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        PlayerRespawnEvent.onPlayerRespawn(event.getEntity());
+    }
 }
