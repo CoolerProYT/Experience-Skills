@@ -10,14 +10,14 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.contextualbar.ContextualBarRenderer;
+import net.minecraft.client.gui.contextualbar.ContextualBar;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 
-public record ModExperienceBarRenderer(Minecraft minecraft, int color, ExperienceType type, AttachmentKey<Integer> key) implements ContextualBarRenderer {
+public record ModExperienceBarRenderer(Minecraft minecraft, int color, ExperienceType type, AttachmentKey<Integer> key) implements ContextualBar {
     private static final Identifier EXPERIENCE_BAR_BACKGROUND_SPRITE = Constants.id("hud/experience_bar_background");
     private static final Identifier EXPERIENCE_BAR_PROGRESS_SPRITE = Constants.id("hud/experience_bar_progress");
 

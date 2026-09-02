@@ -17,7 +17,7 @@
     "requireAnnotations": true
   },
   "client": [
-    "GuiMixin"
+    "HudMixin"
   ]
 }
   
