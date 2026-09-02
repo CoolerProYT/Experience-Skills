@@ -6,10 +6,13 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @Mixin(Player.class)
 public abstract class CommonPlayerMixin {
@@ -24,27 +27,45 @@ public abstract class CommonPlayerMixin {
             ordinal = 1
         )
     )
-    private double getDestroySpeed(Player instance, Holder<Attribute> holder, Operation<Double> original){
+    private double getDestroySpeed(Player instance, Holder<Attribute> holder, Operation<Double> original) {
         double value = original.call(instance, holder);
         ItemStack tool = instance.getMainHandItem();
 
-        if (tool.is(ItemTags.PICKAXES)){
+        if (tool.is(ItemTags.PICKAXES)) {
             double bonus = instance.getAttributeValue(ModAttributes.PICKAXE_MINING_SPEED.holder());
             value *= bonus;
         }
-        if (tool.is(ItemTags.SHOVELS)){
+        if (tool.is(ItemTags.SHOVELS)) {
             double bonus = instance.getAttributeValue(ModAttributes.SHOVEL_MINING_SPEED.holder());
             value *= bonus;
         }
-        if (tool.is(ItemTags.AXES)){
+        if (tool.is(ItemTags.AXES)) {
             double bonus = instance.getAttributeValue(ModAttributes.AXE_MINING_SPEED.holder());
             value *= bonus;
         }
-        if (tool.is(ItemTags.HOES)){
+        if (tool.is(ItemTags.HOES)) {
             double bonus = instance.getAttributeValue(ModAttributes.HOE_MINING_SPEED.holder());
             value *= bonus;
         }
 
         return value;
+    }
+
+    @ModifyConstant(
+        method = {
+            "getDestroySpeed(Lnet/minecraft/world/level/block/state/BlockState;)F",
+            "getDestroySpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F"
+        },
+        constant = @Constant(floatValue = 5.0F)
+    )
+    private float modifyOffGroundPenalty(float original) {
+        Player player = (Player) (Object) this;
+        AttributeInstance instance = player.getAttribute(ModAttributes.FLOATING_MINING_SPEED.holder());
+        if (instance != null){
+            double buff = instance.getValue();
+            return (float) (original - buff);
+        }
+
+        return original;
     }
 }

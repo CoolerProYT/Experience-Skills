@@ -11,6 +11,7 @@
   "attribute.name.shovel_mining_speed": "Shovel Mining Speed",
   "attribute.name.axe_mining_speed": "Axe Mining Speed",
   "attribute.name.hoe_mining_speed": "Hoe Mining Speed",
+  "attribute.name.floating_mining_speed": "Floating Mining Speed",
   "stat.experienceskills.block_broken": "Block Broken",
   "stat.experienceskills.block_walked": "Block Walked",
   "stat.experienceskills.under_water_time": "Under Water Time (Ticks)",
@@ -26,9 +27,9 @@
   "stat.experienceskills.block_mined_with_shovel": "Block Mined With Shovel",
   "stat.experienceskills.block_mined_with_axe": "Block Mined With Axe",
   "stat.experienceskills.block_mined_with_hoe": "Block Mined With Hoe",
+  "stat.experienceskills.block_mined_when_floating": "Block Mined When Floating",
   "key.experienceskills.cycle_contextual_bar": "Cycle Contextual Bar",
   "skill.experienceskills.walking_speed": "Walking Speed",
-  "skill.experienceskills.breaking_speed": "Breaking Speed",
   "skill.experienceskills.strength": "Strength",
   "skill.experienceskills.vitality": "Vitality",
   "skill.experienceskills.jump": "Jump",
@@ -38,5 +39,12 @@
   "skill.experienceskills.fishing_luck": "Fishing Luck",
   "skill.experienceskills.toughness": "Toughness",
   "skill.experienceskills.block_reach": "Block Reach",
-  "skill.experienceskills.entity_reach": "Entity Reach"
+  "skill.experienceskills.entity_reach": "Entity Reach",
+  "skill.experienceskills.mining_luck": "Mining Luck",
+  "skill.experienceskills.pickaxe_breaking_speed": "Pickaxe Breaking Speed",
+  "skill.experienceskills.shovel_breaking_speed": "Shovel Breaking Speed",
+  "skill.experienceskills.axe_breaking_speed": "Axe Breaking Speed",
+  "skill.experienceskills.hoe_breaking_speed": "Hoe Breaking Speed",
+  "skill.experienceskills.floating_breaking_speed": "Floating Breaking Speed",
+  "skill.experienceskills.submerged_breaking_speed": "Submerged Breaking Speed"
 }

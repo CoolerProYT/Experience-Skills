@@ -1,10 +1,10 @@
 package com.coolerpromc.experienceskills.config;
 
-import com.coolerpromc.coolerconfig.Constants;
 import com.coolerpromc.coolerconfig.config.ConfigBuilder;
 import com.coolerpromc.coolerconfig.config.ConfigFormat;
 import com.coolerpromc.coolerconfig.config.ConfigSide;
 import com.coolerpromc.coolerconfig.config.ConfigSpec;
+import com.coolerpromc.experienceskills.Constants;
 import com.coolerpromc.experienceskills.api.type.ExperienceTypeRegistry;
 import com.coolerpromc.experienceskills.config.value.SkillsConfig;
 
@@ -14,7 +14,7 @@ public class ModCommonConfig {
     public static ConfigSpec CONFIG;
 
     public static void init(){
-        ConfigBuilder builder = ConfigSpec.builder(Constants.MOD_ID, ConfigFormat.JSON5).side(ConfigSide.COMMON)
+        ConfigBuilder builder = ConfigSpec.builder(Constants.MODID, ConfigFormat.JSON5).side(ConfigSide.COMMON)
             .comment("""
                  Every skill is driven by a single stat: each time that stat advances by xpAwardActionCount, the player is awarded xpPointToAward experience points.
 

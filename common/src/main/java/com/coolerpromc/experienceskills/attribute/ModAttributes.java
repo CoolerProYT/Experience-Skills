@@ -15,6 +15,7 @@ public class ModAttributes {
     public static final RegistryHandler<Attribute, Attribute> SHOVEL_MINING_SPEED = register("shovel_mining_speed", new RangedAttribute("attribute.name.shovel_mining_speed", 1.0, 0.0, 1024).setSyncable(true));
     public static final RegistryHandler<Attribute, Attribute> AXE_MINING_SPEED = register("axe_mining_speed", new RangedAttribute("attribute.name.axe_mining_speed", 1.0, 0.0, 1024).setSyncable(true));
     public static final RegistryHandler<Attribute, Attribute> HOE_MINING_SPEED = register("hoe_mining_speed", new RangedAttribute("attribute.name.hoe_mining_speed", 1.0, 0.0, 1024).setSyncable(true));
+    public static final RegistryHandler<Attribute, Attribute> FLOATING_MINING_SPEED = register("floating_mining_speed", new RangedAttribute("attribute.name.floating_mining_speed", 0, 0.0, 4).setSyncable(true));
 
     public static RegistryHandler<Attribute, Attribute> register(String name, Attribute attribute){
         return Services.REGISTRY.registerAttribute(name, attribute);

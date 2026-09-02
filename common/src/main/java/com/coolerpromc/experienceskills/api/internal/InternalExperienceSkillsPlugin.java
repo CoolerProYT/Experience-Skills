@@ -51,6 +51,7 @@ public final class InternalExperienceSkillsPlugin implements IExperienceSkillsPl
     public static String SHOVEL_BREAKING_SPEED = "shovel_breaking_speed";
     public static String AXE_BREAKING_SPEED = "axe_breaking_speed";
     public static String HOE_BREAKING_SPEED = "hoe_breaking_speed";
+    public static String FLOATING_BREAKING_SPEED = "floating_breaking_speed";
 
     @Override
     public void registerExperienceType(IExperienceTypeRegistry registry) {
@@ -65,12 +66,13 @@ public final class InternalExperienceSkillsPlugin implements IExperienceSkillsPl
         registry.register(TOUGHNESS, new SkillsConfig(true, 0.02f, 100, 5, 0x8A8A8A, AttributeModifier.Operation.ADD_VALUE, 100, Stats.DAMAGE_TAKEN, true), Attributes.ARMOR_TOUGHNESS);
         registry.register(BLOCK_REACH, new SkillsConfig(true, 0.01f, 50, 5, 0x55D6D6, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.DAMAGE_TAKEN, true), Attributes.BLOCK_INTERACTION_RANGE);
         registry.register(ENTITY_REACH, new SkillsConfig(true, 0.01f, 20, 5, 0xD65555, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.ENTITY_KILLED.id(), true), Attributes.ENTITY_INTERACTION_RANGE);
-        registry.register(MINING_LUCK, new SkillsConfig(true, 0.2f, 20, 5, 9412536, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.ORE_MINED.id(), true), ModAttributes.MINING_LUCK.holder());
-        registry.register(SUBMERGED_BREAKING_SPEED, new SkillsConfig(true, 0.02f, 20, 5, 0x9cfff3, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_IN_WATER.id(), true), Attributes.SUBMERGED_MINING_SPEED);
-        registry.register(PICKAXE_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 20, 5, 0xfcba03, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_PICKAXE.id(), true), ModAttributes.PICKAXE_MINING_SPEED.holder());
-        registry.register(SHOVEL_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 20, 5, 0xc2e35f, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_SHOVEL.id(), true), ModAttributes.SHOVEL_MINING_SPEED.holder());
-        registry.register(AXE_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 20, 5, 0x58dbba, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_AXE.id(), true), ModAttributes.AXE_MINING_SPEED.holder());
-        registry.register(HOE_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 20, 5, 0xab79e0, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_HOE.id(), true), ModAttributes.HOE_MINING_SPEED.holder());
+        registry.register(MINING_LUCK, new SkillsConfig(true, 0.2f, 50, 5, 9412536, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.ORE_MINED.id(), true), ModAttributes.MINING_LUCK.holder());
+        registry.register(SUBMERGED_BREAKING_SPEED, new SkillsConfig(true, 0.02f, 50, 5, 0x9cfff3, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_IN_WATER.id(), true), Attributes.SUBMERGED_MINING_SPEED);
+        registry.register(PICKAXE_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 50, 5, 0xfcba03, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_PICKAXE.id(), true), ModAttributes.PICKAXE_MINING_SPEED.holder());
+        registry.register(SHOVEL_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 50, 5, 0xc2e35f, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_SHOVEL.id(), true), ModAttributes.SHOVEL_MINING_SPEED.holder());
+        registry.register(AXE_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 50, 5, 0x58dbba, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_AXE.id(), true), ModAttributes.AXE_MINING_SPEED.holder());
+        registry.register(HOE_BREAKING_SPEED, new SkillsConfig(true, 0.05f, 50, 5, 0xab79e0, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, ModStats.BLOCK_MINED_WITH_HOE.id(), true), ModAttributes.HOE_MINING_SPEED.holder());
+        registry.register(FLOATING_BREAKING_SPEED, new SkillsConfig(true, 0.04f, 20, 5, 0xd5d998, AttributeModifier.Operation.ADD_VALUE, 100, ModStats.BLOCK_MINED_WHEN_FLOATING.id(), true), ModAttributes.FLOATING_MINING_SPEED.holder());
 
         this.registerFromConfigFiles(registry);
     }

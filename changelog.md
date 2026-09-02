@@ -1,14 +1,9 @@
-## 26.1.2.4
-- Added stat `block_mined_in_water`
-- Added `Submerged Breaking Speed` skill - break blocks faster in water
-- Added `Pickaxe Breaking Speed` skill - break blocks faster using pickaxe
-- Added `Shovel Breaking Speed` skill - break blocks faster using shovel
-- Added `Axe Breaking Speed` skill - break blocks faster using axe
-- Added `Hoe Breaking Speed` skill - break blocks faster using hoe
-- Added new field `dropOnDeath` to skill config - experience will not drop when player death if set to `false`, default to `true`
-- Removed `Breaking Speed` skill - replaced with tool based skill
-
-### Fabric
-- Fixed `GuiMixin` not applying - caused vanilla contextual bar still rendering behind skill experience bar
+## 26.1.2.5
+- Added stat `block_mined_when_floating`
+- Added attribute `floating_mining_speed`
+- Added `Floating Breaking Speed` skill - break blocks faster when floating in water or hovering on sky
+- Changed default value of `xpAwardActionCount` for new skills added in last 2 update to `50`
+- Fixed missing translation for new skills added in last 2 update
+- Fixed using wrong config file name
 
 Notes: Some of the skill might be removed and replace by separated skill in the future
