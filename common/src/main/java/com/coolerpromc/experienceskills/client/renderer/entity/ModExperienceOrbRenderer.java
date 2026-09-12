@@ -19,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 
 public class ModExperienceOrbRenderer<T extends ModExperienceOrb> extends EntityRenderer<T, ModExperienceOrbRenderState> {
     private static final Identifier EXPERIENCE_ORB_LOCATION = Identifier.withDefaultNamespace("textures/entity/experience/experience_orb.png");
-    private static final RenderType RENDER_TYPE = RenderTypes.entityTranslucentCullItemTarget(EXPERIENCE_ORB_LOCATION);
+    private static final RenderType RENDER_TYPE = RenderTypes.entityTranslucentCull(EXPERIENCE_ORB_LOCATION);
 
     public ModExperienceOrbRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -52,7 +52,7 @@ public class ModExperienceOrbRenderer<T extends ModExperienceOrb> extends Entity
         int bc = (int)(baseB * brightness);
 
         poseStack.translate(0.0F, 0.1F, 0.0F);
-        poseStack.mulPose(camera.orientation);
+        poseStack.rotate(camera.orientation);
         poseStack.scale(0.3F, 0.3F, 0.3F);
         submitNodeCollector.submitCustomGeometry(poseStack, RENDER_TYPE, (pose, buffer) -> {
             vertex(buffer, pose, -0.5F, -0.25F, rc, gc, bc, u0, v1, state.lightCoords);

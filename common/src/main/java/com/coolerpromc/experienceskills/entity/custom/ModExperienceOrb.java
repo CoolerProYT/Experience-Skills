@@ -43,7 +43,6 @@ public class ModExperienceOrb extends Entity {
     private int health = 5;
     private int count = 1;
     private @Nullable Player followingPlayer;
-    private final InterpolationHandler interpolation = new InterpolationHandler(this);
     private final ExperienceType experienceType;
 
     public ModExperienceOrb(EntityType<? extends ModExperienceOrb> type, Level level, ExperienceType experienceType) {
@@ -76,7 +75,6 @@ public class ModExperienceOrb extends Entity {
 
     @Override
     public void tick() {
-        this.interpolation.interpolate();
         if (this.firstTick && this.level().isClientSide()) {
             this.firstTick = false;
         } else {
@@ -337,8 +335,13 @@ public class ModExperienceOrb extends Entity {
     }
 
     @Override
-    public InterpolationHandler getInterpolation() {
-        return this.interpolation;
+    protected InterpolationHandler createInterpolationHandler() {
+        return LinearInterpolationHandler.create(this);
+    }
+
+    @Override
+    public MoveSimulationType getMoveSimulationType() {
+        return MoveSimulationType.SERVER_AND_CLIENT;
     }
 
     public void addExperience(ServerPlayer entity, int amount, AttachmentKey<Integer> key){
