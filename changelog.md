@@ -1,6 +1,2 @@
-## 26.2.0.1
-### Fabric
-- Fixed crash when fishing
-
-### NeoForge
-- No changes
+## 26.2.0.2
+- Fixed wrong translation key for fishing luck
