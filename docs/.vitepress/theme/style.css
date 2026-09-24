@@ -1,0 +1,83 @@
+/* Experience-orb green, with a gold accent from the XP bar. */
+:root {
+  --vp-c-brand-1: #3f8f1f;
+  --vp-c-brand-2: #4ea52a;
+  --vp-c-brand-3: #5cb83a;
+  --vp-c-brand-soft: rgba(92, 184, 58, 0.14);
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #5cb83a 25%, #e6c14a);
+  --vp-home-hero-image-background-image: radial-gradient(circle, rgba(128, 255, 32, 0.4) 0%, rgba(128, 255, 32, 0) 70%);
+  --vp-home-hero-image-filter: blur(40px);
+
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: var(--vp-c-white);
+  --vp-button-brand-bg: var(--vp-c-brand-3);
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: var(--vp-c-white);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: var(--vp-c-white);
+  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+
+  --vp-custom-block-tip-border: transparent;
+  --vp-custom-block-tip-text: var(--vp-c-text-1);
+  --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
+  --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
+
+  --es-slot-bg: #8b8b8b;
+  --es-slot-hover: #a3a3a3;
+  --es-slot-dark: #373737;
+  --es-slot-light: #ffffff;
+}
+
+.dark {
+  --vp-c-brand-1: #8fe06a;
+  --vp-c-brand-2: #74cc4e;
+  --vp-c-brand-3: #4ea52a;
+  --vp-c-brand-soft: rgba(143, 224, 106, 0.16);
+}
+
+/* Pixel art stays crisp at any size. */
+.VPHero .image-src,
+.VPFeature .VPImage,
+.pixelated {
+  image-rendering: pixelated;
+}
+
+.VPHero .image-src {
+  width: 220px;
+  height: 220px;
+  border-radius: 24px;
+}
+
+.es-muted {
+  color: var(--vp-c-text-2);
+  font-size: 0.875em;
+}
+
+/* A row of slots joined by arrows, for "do this, get that" explanations. */
+.es-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin: 20px 0;
+  padding: 14px 18px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 10px;
+  background: var(--vp-c-bg-soft);
+}
+.es-flow > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.es-item-info {
+  margin: 0 !important;
+  line-height: 1.6;
+}
+.es-arrow {
+  font-size: 20px;
+  color: var(--vp-c-text-3);
+}
