@@ -44,7 +44,15 @@ public class NeoForgeAttachmentHelper implements IAttachmentHelper {
 
     private static <T> Supplier<AttachmentType<?>> register(AttachmentKey<T> key){
         return NeoForgeRegistryHelper.ATTACHMENTS.register(key.id(), () -> {
-            AttachmentType.Builder<T> builder = AttachmentType.builder(key.defaultValue()).serialize(key.codec().fieldOf(key.id())).sync(key.streamCodec());
+            AttachmentType.Builder<T> builder = AttachmentType.builder(key.defaultValue());
+            if (key.persistent()){
+                builder.serialize(key.codec().fieldOf(key.id()));
+            }
+            if (key.syncTargetOnly()){
+                builder.sync((holder, to) -> holder == to, key.streamCodec());
+            } else {
+                builder.sync(key.streamCodec());
+            }
             if (key.copyOnDeath()){
                 builder.copyOnDeath();
             }

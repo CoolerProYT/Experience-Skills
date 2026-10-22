@@ -1,9 +1,14 @@
 package com.coolerpromc.experienceskills;
 
+import com.coolerpromc.experienceskills.api.event.SkillEvents;
 import com.coolerpromc.experienceskills.api.type.ExperienceTypeRegistry;
+import com.coolerpromc.experienceskills.effect.ModEffects;
+import com.coolerpromc.experienceskills.skill.SkillAdvancements;
+import com.coolerpromc.experienceskills.skill.SkillScoreboard;
 import com.coolerpromc.experienceskills.attribute.ModAttributes;
 import com.coolerpromc.experienceskills.command.ModArgumentTypeInfos;
 import com.coolerpromc.experienceskills.config.ModCommonConfig;
+import com.coolerpromc.experienceskills.config.ModGeneralConfig;
 import com.coolerpromc.experienceskills.data.attachment.ModDataAttachments;
 import com.coolerpromc.experienceskills.data.component.ModDataComponents;
 import com.coolerpromc.experienceskills.entity.ModEntities;
@@ -18,6 +23,7 @@ public class ExperienceSkills {
 
         ExperienceTypeRegistry.init();
         ModCommonConfig.init();
+        ModGeneralConfig.init();
 
         ModItems.init();
         ModCreativeTabs.init();
@@ -26,5 +32,9 @@ public class ExperienceSkills {
         ModDataAttachments.init();
         ModEntityDataSerializers.init();
         ModArgumentTypeInfos.init();
+        ModEffects.init();
+
+        SkillEvents.registerLevelChange(SkillAdvancements::onLevelChange);
+        SkillEvents.registerLevelChange(SkillScoreboard::onLevelChange);
     }
 }

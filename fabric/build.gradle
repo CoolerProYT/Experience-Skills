@@ -3,12 +3,20 @@ plugins {
     id 'net.fabricmc.fabric-loom'
     id "me.modmuss50.mod-publish-plugin"
 }
+repositories {
+    maven { url = 'https://maven.coolerpromc.com/releases/' }
+}
 dependencies {
     minecraft("com.mojang:minecraft:${minecraft_version}")
     implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
     implementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
 
     implementation include("com.coolerpromc.coolerconfig:coolerconfig-fabric-${minecraft_version}:${cooler_config_version}")
+
+    compileOnly "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
+    compileOnly "maven.modrinth:jade:${jade_version}+fabric"
+
+    localRuntime("com.coolerpromc.mctest:mctest-fabric-${minecraft_version}:26.3.0.3") { transitive = false }
 }
 
 loom {

@@ -33,6 +33,17 @@ new SkillsConfig(
 )
 ```
 
+This nine-argument constructor gives every newer field its default. To set them, chain the `with...` methods, each of which returns a copy:
+
+```java
+new SkillsConfig(true, 0.02f, 100, 5, 0x55FF55, AttributeModifier.Operation.ADD_MULTIPLIED_BASE, 100, Stats.JUMP, true)
+    .withAdditionalStat(Stats.FALL_ONE_CM, 0.01)                   // also trained by distance fallen
+    .withCurve(new XpCurve(XpCurve.Type.LINEAR, 1.5))               // 1.5x the linear curve
+    .withScaling(BonusScaling.SQRT)                                 // front-load the bonus
+    .withDeathPenalty(0.25f, 50)                                    // lose 25% on death, drop at most 50
+    .withMilestones(Milestone.effect(50, Identifier.withDefaultNamespace("jump_boost"), 0))
+```
+
 Every field is documented on the [Skill Config](/config/skill-config) page. Note that `stat` must be a **custom statistic** — a built-in Experience Skills stat, a stat you registered yourself, or a `minecraft:custom` stat. Per-block / per-item statistics can't be used directly; pool them into a custom stat first (see [Adding a Stat](/developer/custom-stats)).
 
 ## Example: A Simple Skill

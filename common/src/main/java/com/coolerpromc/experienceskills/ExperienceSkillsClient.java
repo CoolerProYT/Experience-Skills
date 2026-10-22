@@ -2,6 +2,7 @@ package com.coolerpromc.experienceskills;
 
 import com.coolerpromc.experienceskills.api.type.ExperienceTypeRegistry;
 import com.coolerpromc.experienceskills.client.hud.HudRenderer;
+import com.coolerpromc.experienceskills.config.ModClientConfig;
 import com.coolerpromc.experienceskills.client.model.tint.ExperienceBottleBorderTintSource;
 import com.coolerpromc.experienceskills.client.model.tint.ExperienceBottleTintSource;
 import com.coolerpromc.experienceskills.client.renderer.entity.ModExperienceOrbRenderer;
@@ -21,6 +22,7 @@ import java.util.Objects;
 
 public class ExperienceSkillsClient {
     public static void init(){
+        ModClientConfig.init();
         ModKeyMappings.init();
     }
 

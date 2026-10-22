@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -41,7 +42,8 @@ public final class ExperienceType implements StringRepresentable {
     public static final ExperienceType VANILLA = register("vanilla", SkillsConfig.VANILLA, null, (player, level, experienceType) -> {});
 
     private final String name;
-    private final @NotNull SkillsConfig config;
+    private final @NotNull SkillsConfig localConfig;
+    private volatile @NotNull SkillsConfig config;
     private final @Nullable Holder<Attribute> attributeHolder;
     private final IExperienceTypeRegistry.Handler handler;
 
@@ -57,6 +59,7 @@ public final class ExperienceType implements StringRepresentable {
 
     private ExperienceType(String name, @NotNull SkillsConfig config, @Nullable Holder<Attribute> attributeHolder, IExperienceTypeRegistry.Handler handler){
         this.name = name;
+        this.localConfig = config;
         this.config = config;
         this.attributeHolder = attributeHolder;
         this.handler = handler;
@@ -106,6 +109,44 @@ public final class ExperienceType implements StringRepresentable {
         return config;
     }
 
+    @ApiStatus.Internal
+    public void applySyncedConfig(@NotNull SkillsConfig config){
+        this.config = config;
+    }
+
+    @ApiStatus.Internal
+    public void resetSyncedConfig(){
+        this.config = this.localConfig;
+    }
+
+    /**
+     * @return the level reached with {@code totalPoints} points
+     */
+    public int levelFor(int totalPoints){
+        return config.curve().level(totalPoints);
+    }
+
+    /**
+     * @return the total points needed to reach {@code level}
+     */
+    public int totalPointsForLevel(int level){
+        return config.curve().totalForLevel(level);
+    }
+
+    /**
+     * @return the points needed to go from {@code level} to the next
+     */
+    public int pointsForNextLevel(int level){
+        return config.curve().xpNeededForNextLevel(level);
+    }
+
+    /**
+     * @return the attribute bonus this skill grants at {@code level}
+     */
+    public double bonusForLevel(int level){
+        return config.bonusForLevel(level);
+    }
+
     /**
      * @return the skill's level cap
      */
@@ -151,6 +192,14 @@ public final class ExperienceType implements StringRepresentable {
      */
     public static Optional<ExperienceType> byName(String name) {
         return Optional.ofNullable(BY_NAME.get(name));
+    }
+
+    /**
+     * @return the skill whose points are stored under {@code key}
+     */
+    public static Optional<ExperienceType> byKey(AttachmentKey<Integer> key){
+        String id = key.id();
+        return byName(id.endsWith("_experience") ? id.substring(0, id.length() - "_experience".length()) : id);
     }
 
     @Override

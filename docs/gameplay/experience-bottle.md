@@ -13,7 +13,7 @@ A Bottle o' Enchanting for a single skill. Every skill has its own bottle, tinte
 
 ## All bottles
 
-Every enabled skill gets a bottle in the **Experience Skills: Bottle** creative tab, in the same order as the HUD cycle. Hover a bottle to see its name.
+Every enabled skill gets a bottle in the **Experience Skills: Bottle** creative tab, in the same order as the skills screen. Hover a bottle to see its name.
 
 <BottleGallery />
 

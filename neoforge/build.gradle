@@ -13,10 +13,21 @@ repositories {
             password = findProperty("maven_password")
         }
     }
+    maven { url = 'https://maven.coolerpromc.com/releases/' }
+}
+
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom localRuntime
 }
 
 dependencies{
     jarJar implementation("com.coolerpromc.coolerconfig:coolerconfig-neoforge-${minecraft_version}:${cooler_config_version}")
+
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    compileOnly "maven.modrinth:jade:${jade_version}+neoforge"
+
+    localRuntime("com.coolerpromc.mctest:mctest-neoforge-${minecraft_version}:26.3.0.3") { transitive = false }
 }
 
 neoForge {

@@ -22,8 +22,8 @@ hero:
 features:
   - icon:
       src: https://storage.googleapis.com/coolerpromc/textures/minecraft/experience_bottle.png
-    title: 18 built-in skills
-    details: Walking, swimming, fighting, mining with each tool, fishing and more. Each one is trained by a different action.
+    title: 29 built-in skills
+    details: Walking, swimming, fighting, archery, mining with each tool, fishing, farming, trading and more. Each one is trained by a different action.
     link: /gameplay/skills-list
     linkText: See every skill
   - icon:
@@ -38,6 +38,12 @@ features:
     details: Each level applies a scaling modifier to a Minecraft attribute, as a flat amount or a percentage of the base or total value.
     link: /gameplay/attributes
     linkText: Attributes
+  - icon:
+      src: https://storage.googleapis.com/coolerpromc/textures/minecraft/nether_star.png
+    title: Milestones and more
+    details: Unlock perks at key levels, track every skill on the skills screen, earn advancements, brew Skill Insight and move experience between skills.
+    link: /gameplay/progression
+    linkText: Progression
   - icon:
       src: https://storage.googleapis.com/coolerpromc/textures/minecraft/crafting_table.png
     title: Config and plugin API

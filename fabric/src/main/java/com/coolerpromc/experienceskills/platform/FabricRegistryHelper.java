@@ -22,7 +22,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -122,5 +124,17 @@ public class FabricRegistryHelper implements IRegistryHelper {
     @Override
     public List<RegistryHandler<Attribute, Attribute>> getRegisteredAttributes() {
         return ATTRIBUTES;
+    }
+
+    @Override
+    public RegistryHandler<MobEffect, MobEffect> registerMobEffect(String name, Supplier<MobEffect> effect) {
+        Holder<MobEffect> holder = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, Constants.id(name), effect.get());
+        return () -> holder;
+    }
+
+    @Override
+    public RegistryHandler<Potion, Potion> registerPotion(String name, Supplier<Potion> potion) {
+        Holder<Potion> holder = Registry.registerForHolder(BuiltInRegistries.POTION, Constants.id(name), potion.get());
+        return () -> holder;
     }
 }

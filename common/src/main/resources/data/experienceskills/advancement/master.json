@@ -1,0 +1,25 @@
+{
+  "parent": "experienceskills:expert",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:nether_star"
+    },
+    "title": {
+      "translate": "advancements.experienceskills.master.title"
+    },
+    "description": {
+      "translate": "advancements.experienceskills.master.description"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

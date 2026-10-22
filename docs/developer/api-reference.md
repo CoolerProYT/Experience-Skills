@@ -39,7 +39,7 @@ Each of these re-applies the skill's bonus after changing it.
 | `giveLevels(ServerPlayer, ExperienceType, int levels)` | Raise by a number of levels |
 | `updateAllSkillStatus(ServerPlayer)` | Re-apply every skill's bonus and run each handler |
 
-`updateAllSkillStatus` is called automatically on login and on command changes. Call it yourself only if you alter skill state through a path the API doesn't cover.
+All of these notify [level-change listeners](/developer/events#level-changes) when the level changes. `updateAllSkillStatus` is called automatically on login, respawn and command changes. Call it yourself only if you alter skill state through a path the API doesn't cover.
 
 ## Awarding Experience
 
@@ -74,7 +74,15 @@ An `ExperienceType` exposes its own definition:
 | `operation()` | How the level bonus combines with the attribute |
 | `isEnabled()` | Whether the skill is enabled in config |
 | `getAttributeHolder()` | The attribute the bonus applies to (`null` for `vanilla`) |
-| `next()` | The next enabled skill in the HUD cycle, wrapping around |
+| `next()` | The next enabled skill in `ExperienceType.ALL` order, wrapping around through `VANILLA` |
+| `levelFor(int points)` | The level reached with a number of points, on this skill's curve |
+| `totalPointsForLevel(int level)` | The total points needed to reach a level |
+| `pointsForNextLevel(int level)` | The points needed to go from a level to the next |
+| `bonusForLevel(int level)` | The attribute bonus at a level, after `scaling` |
+
+::: info Client-side config
+On a client connected to a server, `getConfig()` returns the server's values, which are sent when the player joins. It reverts to the local config file after disconnecting.
+:::
 
 ## Minimal Example
 

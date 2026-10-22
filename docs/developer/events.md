@@ -50,6 +50,32 @@ StatEvents.register((player, stat, value) -> {
 });
 ```
 
+## Skill Events
+
+`SkillEvents` holds two more hooks. Both fire on the **logical server only**.
+
+### Level changes
+
+```java
+SkillEvents.registerLevelChange((player, type, oldLevel, newLevel) -> {
+    if (newLevel > oldLevel && newLevel % 10 == 0) {
+        player.sendSystemMessage(Component.literal("Level " + newLevel + "!"));
+    }
+});
+```
+
+Fired whenever a player's level in a skill changes for any reason: collecting orbs, commands, the API, transfers, or losing experience on death. `newLevel` is lower than `oldLevel` when levels were lost. The mod's own advancements and scoreboard export are built on this hook.
+
+### Modifying experience gains
+
+```java
+// Double all Strength experience earned at night
+SkillEvents.registerModifyGain((player, type, amount) ->
+    type.getSerializedName().equals("strength") && player.level().isDarkOutside() ? amount * 2 : amount);
+```
+
+Each modifier receives the amount returned by the previous one and returns the amount to award. It applies to experience earned from stats, before it is spawned as orbs; it does not affect commands or `ExperienceSkillsAPI.givePoints`. The Skill Insight potion is built on this hook.
+
 ## Related
 
 - [Adding a Stat](/developer/custom-stats) uses `StatEvents` to pool vanilla statistics into a custom stat.

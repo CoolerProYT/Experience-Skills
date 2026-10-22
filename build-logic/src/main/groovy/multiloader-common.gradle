@@ -8,6 +8,16 @@ repositories {
         name = 'CoolerProMC'
         url = 'https://maven.coolerpromc.com/releases'
     }
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com'
+        content { includeGroup('mezz.jei') }
+    }
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup('maven.modrinth') }
+    }
 }
 
 base {

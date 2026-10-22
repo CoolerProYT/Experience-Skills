@@ -49,14 +49,60 @@ const number = (literal) => {
 // Built-in skills: the constants give ids, the register(...) calls give the default SkillsConfig.
 const plugin = read(join(java, 'api/internal/InternalExperienceSkillsPlugin.java'))
 const skillIds = Object.fromEntries([...plugin.matchAll(/public static String (\w+) = "([a-z0-9_]+)";/g)].map((m) => [m[1], m[2]]))
-const skills = [...plugin.matchAll(/registry\.register\((\w+), new SkillsConfig\(([^)]*\([^)]*\)[^)]*|[^)]*)\), ([^;]+)\);/g)]
-  .filter((m) => skillIds[m[1]])
-  .map((m) => {
-    const [enabled, incrementPerLevel, xpAwardActionCount, xpPointToAward, rgbColor, operation, maxLevel, stat, dropOnDeath] = m[2]
-      .split(',')
-      .map((part) => part.trim())
-    const [attribute, handler] = m[3].split(',').map((part) => part.trim())
-    const id = skillIds[m[1]]
+
+/** Returns the text between the parenthesis at `open` and its matching close, and the index after it. */
+const balanced = (text, open) => {
+  let depth = 0
+  for (let i = open; i < text.length; i++) {
+    if (text[i] === '(') depth++
+    else if (text[i] === ')' && --depth === 0) return { inner: text.slice(open + 1, i), end: i + 1 }
+  }
+  throw new Error(`Unbalanced parentheses in InternalExperienceSkillsPlugin.java near: ${text.slice(open, open + 80)}`)
+}
+
+/** Splits on commas that are not nested inside parentheses. */
+const splitArgs = (text) => {
+  const out = []
+  let depth = 0
+  let current = ''
+  for (const ch of text) {
+    if (ch === '(') depth++
+    if (ch === ')') depth--
+    if (ch === ',' && depth === 0) {
+      out.push(current.trim())
+      current = ''
+    } else {
+      current += ch
+    }
+  }
+  if (current.trim()) out.push(current.trim())
+  return out
+}
+
+/** `vanilla("step_height")` is a minecraft id; a quoted string is taken as-is. */
+const idArg = (expr) => {
+  const vanilla = expr.match(/vanilla\("([^"]+)"\)/)
+  if (vanilla) return `minecraft:${vanilla[1]}`
+  const literal = expr.match(/"([^"]+)"/)
+  return literal ? literal[1] : expr
+}
+
+const milestones = (configExpr) =>
+  [...configExpr.matchAll(/Milestone\.(effect|attribute)\(/g)].map((m) => {
+    const args = splitArgs(balanced(configExpr, m.index + m[0].length - 1).inner)
+    if (m[1] === 'effect') {
+      return { level: number(args[0]), effect: idArg(args[1]), amplifier: number(args[2] ?? '0') }
+    }
+    return { level: number(args[0]), attribute: idArg(args[1]), amount: number(args[2]), operation: path(args[3].split('.').pop()) }
+  })
+
+const skills = [...plugin.matchAll(/registry\.register\(/g)]
+  .map((m) => splitArgs(balanced(plugin, m.index + m[0].length - 1).inner))
+  .filter((args) => skillIds[args[0]] && args[1]?.startsWith('new SkillsConfig('))
+  .map(([constant, configExpr, attribute, handler]) => {
+    const configArgs = splitArgs(balanced(configExpr, configExpr.indexOf('(')).inner)
+    const [enabled, incrementPerLevel, xpAwardActionCount, xpPointToAward, rgbColor, operation, maxLevel, stat, dropOnDeath] = configArgs
+    const id = skillIds[constant]
     return {
       id,
       name: lang[`skill.experienceskills.${id}`] ?? id,
@@ -70,9 +116,17 @@ const skills = [...plugin.matchAll(/registry\.register\((\w+), new SkillsConfig\
       operation: path(operation.split('.').pop()),
       maxLevel: number(maxLevel),
       dropOnDeath: dropOnDeath === 'true',
+      milestones: milestones(configExpr),
       handler: Boolean(handler),
     }
   })
+
+if (skills.length !== Object.keys(skillIds).length) {
+  const parsed = new Set(skills.map((s) => s.id))
+  const missing = Object.values(skillIds).filter((id) => !parsed.has(id))
+  console.error(`Could not parse the register(...) call for: ${missing.join(', ')}. The sync script needs updating for the new format.`)
+  process.exit(1)
+}
 
 // Custom stats, named from the lang file.
 const stats = [...read(join(java, 'stat/ModStats.java')).matchAll(/registerStat\("([a-z0-9_]+)"\)/g)].map((m) => ({

@@ -74,7 +74,7 @@ dependencies {
 
 ```properties
 # gradle.properties
-minecraft_version=26.1.2
+minecraft_version=26.3
 experienceskills_version=<latest>
 ```
 

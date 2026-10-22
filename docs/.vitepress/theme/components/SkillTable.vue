@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { amount, attributeName, bonus, categories, category, data, hex, isCustomAttribute, statIcon, statName } from '../experienceskills'
+import { amount, attributeName, bonus, categories, category, data, hex, isCustomAttribute, milestoneText, statIcon, statName } from '../experienceskills'
 import ItemSlot from './ItemSlot.vue'
 
 const filter = ref('All')
@@ -58,6 +58,7 @@ const rows = computed(() => {
               <strong>{{ bonus(s, 1) }}</strong> <span class="es-muted">per level</span>
             </div>
             <div class="num es-muted">Lv {{ s.maxLevel }}: {{ bonus(s, s.maxLevel) }}</div>
+            <div v-for="m in s.milestones" :key="m.level" class="num es-muted">★ Lv {{ m.level }}: {{ milestoneText(m) }}</div>
           </td>
           <td>
             <div class="cell">

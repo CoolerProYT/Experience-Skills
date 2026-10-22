@@ -24,11 +24,11 @@ Each file has three top-level keys:
 
 ```json
 {
-  "name": "luck",
-  "attribute": "minecraft:luck",
+  "name": "rancher",
+  "attribute": "minecraft:max_health",
   "defaultConfig": {
     "enabled": true,
-    "incrementPerLevel": 0.1,
+    "incrementPerLevel": 0.04,
     "xpAwardActionCount": 100,
     "xpPointToAward": 5,
     "rgbColor": 43520,
@@ -40,11 +40,13 @@ Each file has three top-level keys:
 }
 ```
 
-That single file adds a **Luck** skill that trains from animals bred and adds flat Luck as it levels. It gets its own orbs, HUD bar and <ItemSlot :color="43520" name="Luck Experience Bottle" /> [Experience Bottle](/gameplay/experience-bottle), all in its `rgbColor` (`43520` is `#00AA00`).
+That single file adds a **Rancher** skill that trains from animals bred and adds flat Max Health as it levels. It gets its own orbs, HUD bar and <ItemSlot :color="43520" name="Rancher Experience Bottle" /> [Experience Bottle](/gameplay/experience-bottle), all in its `rgbColor` (`43520` is `#00AA00`).
+
+The optional fields (`additionalStats`, `curve`, `scaling`, `deathPenalty`, `deathDropCap` and `milestones`) work here too; leave them out to use their defaults. A skill added this way has no translation, so its name is shown from its id (`rancher` → *Rancher*).
 
 ## Rules & Limits
 
-- **`name` must be unique** across all skills, including built-ins and addon skills.
+- **`name` must be unique** across all skills, including built-ins and addon skills. A file that reuses a built-in name, such as `luck` or `jump`, replaces that built-in skill's defaults.
 - **`attribute` must already exist.** Config-file skills can only buff an attribute that some mod (vanilla or otherwise) has registered — they can't create a new attribute. To add a new attribute you need the [Plugin API](/developer/custom-attributes).
 - **`stat` must be a custom statistic.** Use a built-in Experience Skills stat or a `minecraft:custom` stat. Per-block / per-item statistics can't drive a skill directly.
 - Config-file skills get the automatic attribute bonus only — they can't attach custom per-update logic (a `Handler`). For that, use a Java [plugin](/developer/custom-skills).

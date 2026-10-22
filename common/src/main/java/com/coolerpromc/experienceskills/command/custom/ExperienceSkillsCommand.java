@@ -1,6 +1,8 @@
 package com.coolerpromc.experienceskills.command.custom;
 
 import com.coolerpromc.experienceskills.command.argument.ExperienceTypeArgument;
+import com.coolerpromc.experienceskills.config.ModGeneralConfig;
+import com.coolerpromc.experienceskills.skill.SkillManager;
 import com.coolerpromc.experienceskills.entity.custom.ModExperienceOrb;
 import com.coolerpromc.experienceskills.api.type.ExperienceType;
 import com.coolerpromc.experienceskills.util.TriPredicate;
@@ -23,12 +25,43 @@ public class ExperienceSkillsCommand {
         Component.translatable("commands.experience.set.points.invalid")
     );
 
+    private static final SimpleCommandExceptionType ERROR_TRANSFER_DISABLED = new SimpleCommandExceptionType(
+        Component.translatable("commands.experienceskills.transfer.disabled")
+    );
+    private static final SimpleCommandExceptionType ERROR_TRANSFER_SAME = new SimpleCommandExceptionType(
+        Component.translatable("commands.experienceskills.transfer.same")
+    );
+    private static final SimpleCommandExceptionType ERROR_TRANSFER_DISABLED_SKILL = new SimpleCommandExceptionType(
+        Component.translatable("commands.experienceskills.transfer.disabled_skill")
+    );
+    private static final SimpleCommandExceptionType ERROR_TRANSFER_EMPTY = new SimpleCommandExceptionType(
+        Component.translatable("commands.experienceskills.transfer.empty")
+    );
+
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(
             Commands.literal("experienceskills")
-                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                .then(
+                    Commands.literal("transfer")
+                        .then(
+                            Commands.argument("from", new ExperienceTypeArgument())
+                                .then(
+                                    Commands.argument("to", new ExperienceTypeArgument())
+                                        .then(
+                                            Commands.argument("points", IntegerArgumentType.integer(1))
+                                                .executes(c -> transferExperience(
+                                                    c.getSource(),
+                                                    ExperienceTypeArgument.getExperienceType(c, "from"),
+                                                    ExperienceTypeArgument.getExperienceType(c, "to"),
+                                                    IntegerArgumentType.getInteger(c, "points")
+                                                ))
+                                        )
+                                )
+                        )
+                )
                 .then(
                     Commands.literal("add")
+                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(
                             Commands.argument("target", EntityArgument.players())
                                 .then(
@@ -74,6 +107,7 @@ public class ExperienceSkillsCommand {
                 )
                 .then(
                     Commands.literal("set")
+                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(
                             Commands.argument("target", EntityArgument.players())
                                 .then(
@@ -119,6 +153,7 @@ public class ExperienceSkillsCommand {
                 )
                 .then(
                     Commands.literal("query")
+                        .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(
                             Commands.argument("target", EntityArgument.player())
                                 .then(
@@ -135,6 +170,34 @@ public class ExperienceSkillsCommand {
                         )
                 )
         );
+    }
+
+    private static int transferExperience(CommandSourceStack source, ExperienceType from, ExperienceType to, int points) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        if (!ModGeneralConfig.TRANSFER_ENABLED.get()) {
+            throw ERROR_TRANSFER_DISABLED.create();
+        }
+        if (from == to || from == ExperienceType.VANILLA || to == ExperienceType.VANILLA) {
+            throw ERROR_TRANSFER_SAME.create();
+        }
+        if (!from.isEnabled() || !to.isEnabled()) {
+            throw ERROR_TRANSFER_DISABLED_SKILL.create();
+        }
+
+        int available = SkillManager.getPoints(player, from);
+        int moved = Math.min(points, available);
+        if (moved <= 0) {
+            throw ERROR_TRANSFER_EMPTY.create();
+        }
+        int received = (int) Math.floor(moved * ModGeneralConfig.TRANSFER_EFFICIENCY.get());
+
+        SkillManager.setPoints(player, from, available - moved, false);
+        SkillManager.addPoints(player, to, received, true);
+
+        source.sendSuccess(() -> Component.translatable("commands.experienceskills.transfer.success", moved,
+            Component.translatable("skill.experienceskills." + from.getSerializedName()), received,
+            Component.translatable("skill.experienceskills." + to.getSerializedName())), false);
+        return received;
     }
 
     private static int queryExperience(CommandSourceStack source, ServerPlayer target, Type type, ExperienceType experienceType) {

@@ -16,8 +16,19 @@ export interface Skill {
   operation: Operation
   maxLevel: number
   dropOnDeath: boolean
+  /** Perks unlocked at a level: either a permanent effect or an extra attribute modifier. */
+  milestones: Milestone[]
   /** Whether the skill runs extra logic on update besides its attribute modifier. */
   handler: boolean
+}
+
+export interface Milestone {
+  level: number
+  effect?: string
+  amplifier?: number
+  attribute?: string
+  amount?: number
+  operation?: Operation
 }
 
 export interface Stat {
@@ -62,6 +73,13 @@ const VANILLA_STAT_NAMES: Record<string, string> = {
   'minecraft:jump': 'Jumps',
   'minecraft:damage_taken': 'Damage Taken',
   'minecraft:damage_dealt': 'Damage Dealt',
+  'minecraft:damage_blocked_by_shield': 'Damage Blocked by Shield',
+  'minecraft:fall_one_cm': 'Distance Fallen',
+  'minecraft:crouch_one_cm': 'Distance Crouched',
+  'minecraft:open_chest': 'Chests Opened',
+  'minecraft:enchant_item': 'Items Enchanted',
+  'minecraft:traded_with_villager': 'Traded with Villagers',
+  'minecraft:animals_bred': 'Animals Bred',
 }
 
 export function statName(id: string): string {
@@ -97,6 +115,17 @@ const STAT_ICONS: Record<string, string> = {
   'minecraft:jump': 'minecraft:rabbit_foot',
   'minecraft:damage_taken': 'minecraft:shield',
   'minecraft:damage_dealt': 'minecraft:diamond_sword',
+  'experienceskills:time_on_fire': 'minecraft:blaze_powder',
+  'experienceskills:arrows_hit': 'minecraft:arrow',
+  'experienceskills:crops_harvested': 'minecraft:wheat',
+  'experienceskills:food_eaten': 'minecraft:cooked_beef',
+  'minecraft:damage_blocked_by_shield': 'minecraft:shield',
+  'minecraft:fall_one_cm': 'minecraft:feather',
+  'minecraft:crouch_one_cm': 'minecraft:leather_leggings',
+  'minecraft:open_chest': 'minecraft:chest',
+  'minecraft:enchant_item': 'minecraft:enchanting_table',
+  'minecraft:traded_with_villager': 'minecraft:emerald',
+  'minecraft:animals_bred': 'minecraft:wheat_seeds',
 }
 
 export function statIcon(id: string): string | null {
@@ -116,6 +145,17 @@ const UNITS: Record<string, Unit> = {
   'minecraft:jump': { scale: 1, one: 'jump', many: 'jumps' },
   'minecraft:damage_taken': { scale: 1 / 10, one: 'heart', many: 'hearts' },
   'minecraft:damage_dealt': { scale: 1 / 10, one: 'heart', many: 'hearts' },
+  'minecraft:damage_blocked_by_shield': { scale: 1 / 10, one: 'heart', many: 'hearts' },
+  'minecraft:fall_one_cm': { scale: 1 / 100, one: 'block', many: 'blocks' },
+  'minecraft:crouch_one_cm': { scale: 1 / 100, one: 'block', many: 'blocks' },
+  'experienceskills:time_on_fire': { scale: 1 / 20, one: 'second', many: 'seconds' },
+  'experienceskills:arrows_hit': { scale: 1, one: 'hit', many: 'hits' },
+  'experienceskills:crops_harvested': { scale: 1, one: 'crop', many: 'crops' },
+  'experienceskills:food_eaten': { scale: 1, one: 'meal', many: 'meals' },
+  'minecraft:open_chest': { scale: 1, one: 'chest', many: 'chests' },
+  'minecraft:enchant_item': { scale: 1, one: 'enchantment', many: 'enchantments' },
+  'minecraft:traded_with_villager': { scale: 1, one: 'trade', many: 'trades' },
+  'minecraft:animals_bred': { scale: 1, one: 'animal', many: 'animals' },
 }
 const BLOCKS: Unit = { scale: 1, one: 'block', many: 'blocks' }
 
@@ -154,13 +194,21 @@ export function bonus(s: Skill, level: number): string {
   }
 }
 
+/** What a milestone grants: "Dolphins Grace" or "+0.5 Step Height". */
+export function milestoneText(m: Milestone): string {
+  if (m.effect) return prettify(m.effect) + (m.amplifier ? ` ${['I', 'II', 'III', 'IV', 'V'][m.amplifier] ?? m.amplifier + 1}` : '')
+  const value = m.amount ?? 0
+  const amountText = m.operation === 'add_value' ? `${value < 0 ? '−' : '+'}${number(Math.abs(value))}` : `${value < 0 ? '−' : '+'}${number(Math.abs(value) * 100)}%`
+  return `${amountText} ${attributeName(m.attribute ?? '')}`
+}
+
 export const OPERATION_LABELS: Record<Operation, string> = {
   add_value: 'Flat',
   add_multiplied_base: '% of base',
   add_multiplied_total: '% of total',
 }
 
-// Level curve, same as vanilla XP (XpMath in the mod).
+// Level curve: the default vanilla XP curve (XpMath in the mod). Skills can be given a different curve in the config.
 export function xpNeededForNextLevel(level: number): number {
   if (level >= 30) return 112 + (level - 30) * 9
   if (level >= 15) return 37 + (level - 15) * 5
@@ -226,10 +274,11 @@ export function borderColor(rgb: number): number {
 
 /** Groups for the skill list, by what the player is doing. Skills not listed land in "Other". */
 const CATEGORIES: [string, string[]][] = [
-  ['Movement', ['walking_speed', 'jump', 'swim_speed', 'oxygen']],
-  ['Combat', ['strength', 'vitality', 'toughness', 'entity_reach']],
+  ['Movement', ['walking_speed', 'jump', 'swim_speed', 'oxygen', 'sneaking', 'fall_resistance']],
+  ['Combat', ['strength', 'vitality', 'toughness', 'entity_reach', 'knockback_resistance', 'fire_resistance', 'archery']],
   ['Mining', ['mining_luck', 'pickaxe_breaking_speed', 'shovel_breaking_speed', 'axe_breaking_speed', 'hoe_breaking_speed', 'submerged_breaking_speed', 'floating_breaking_speed', 'block_reach']],
   ['Fishing', ['fishing_speed', 'fishing_luck']],
+  ['Village & Farm', ['farming', 'breeding', 'cooking', 'trading', 'enchanting', 'luck']],
 ]
 
 export function category(id: string): string {

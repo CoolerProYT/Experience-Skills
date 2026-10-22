@@ -23,6 +23,12 @@
         ],
         "experience_skills_plugin": [
             "com.coolerpromc.experienceskills.api.internal.InternalExperienceSkillsPlugin"
+        ],
+        "jei_mod_plugin": [
+            "com.coolerpromc.experienceskills.compat.jei.ExperienceSkillsJeiPlugin"
+        ],
+        "jade": [
+            "com.coolerpromc.experienceskills.compat.jade.ExperienceSkillsJadePlugin"
         ]
     },
     "mixins": [

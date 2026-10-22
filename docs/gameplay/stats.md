@@ -1,6 +1,6 @@
 # Stats
 
-A **stat** is the counter that drives a skill. Every skill names exactly one stat in its config; each time that stat advances by `xpAwardActionCount`, the skill awards `xpPointToAward` experience points. Stats are the same statistics Minecraft already tracks, so progress is saved with your world, and you can see them on the in-game Statistics screen.
+A **stat** is the counter that drives a skill. Every skill names a main stat in its config, and can [add more with weights](/config/skill-config#training-from-several-stats); each time its progress advances by `xpAwardActionCount`, the skill awards `xpPointToAward` experience points. Stats are the same statistics Minecraft already tracks, so progress is saved with your world, and you can see them on the in-game Statistics screen.
 
 ## Built-in stats
 
@@ -14,10 +14,17 @@ Vanilla splits some actions across several statistics. Distance walked, sprinted
 
 ## Using vanilla stats directly
 
-A skill's `stat` doesn't have to be one of the built-ins. **Any vanilla custom statistic** from the in-game Statistics screen works too. The built-in skills already use two:
+A skill's `stat` doesn't have to be one of the built-ins. **Any vanilla custom statistic** from the in-game Statistics screen works too. The built-in skills use several:
 
 - <ItemSlot id="minecraft:rabbit_foot" name="Jumps" /> `minecraft:jump` drives **Jump**
-- <ItemSlot id="minecraft:shield" name="Damage Taken" /> `minecraft:damage_taken` drives **Vitality**, **Toughness** and **Block Reach**
+- <ItemSlot id="minecraft:shield" name="Damage Taken" /> `minecraft:damage_taken` drives **Vitality** and **Toughness**
+- <ItemSlot id="minecraft:shield" name="Damage Blocked by Shield" /> `minecraft:damage_blocked_by_shield` drives **Knockback Resistance**
+- <ItemSlot id="minecraft:feather" name="Distance Fallen" /> `minecraft:fall_one_cm` drives **Fall Resistance**
+- <ItemSlot id="minecraft:leather_leggings" name="Distance Crouched" /> `minecraft:crouch_one_cm` drives **Sneaking**
+- <ItemSlot id="minecraft:chest" name="Chests Opened" /> `minecraft:open_chest` drives **Luck**
+- <ItemSlot id="minecraft:enchanting_table" name="Items Enchanted" /> `minecraft:enchant_item` drives **Enchanting**
+- <ItemSlot id="minecraft:emerald" name="Traded with Villagers" /> `minecraft:traded_with_villager` drives **Trading**
+- <ItemSlot id="minecraft:wheat_seeds" name="Animals Bred" /> `minecraft:animals_bred` drives **Breeding**
 
 ::: warning Mind the units
 Vanilla stores some statistics in awkward units, and `xpAwardActionCount` is measured in those raw units:
@@ -35,4 +42,4 @@ Only **custom statistics** can drive a skill: the `minecraft:custom` category, s
 
 ## How awards fire
 
-Whenever a player is awarded a stat, Experience Skills checks every skill whose `stat` matches. If the stat crossed one or more `xpAwardActionCount` boundaries since the last award, it grants one award per boundary crossed, stopping early if the skill hits its level cap. Even a large single jump in a stat, such as one big fall that deals a lot of damage at once, grants all the experience it should.
+Whenever a player is awarded a stat, Experience Skills checks every skill trained by it. If the skill's progress crossed one or more `xpAwardActionCount` boundaries, it awards `xpPointToAward` for each boundary crossed, in one go, unless the skill is already at its level cap. Even a large single jump in a stat, such as one big fall that deals a lot of damage at once, grants all the experience it should.

@@ -28,6 +28,7 @@ export default defineConfig({
         items: [
           { text: 'Getting started', link: '/gameplay/getting-started' },
           { text: 'Skills', link: '/gameplay/skills-list' },
+          { text: 'Progression', link: '/gameplay/progression' },
           { text: 'Stats', link: '/gameplay/stats' },
           { text: 'Attributes', link: '/gameplay/attributes' },
           { text: 'Experience Bottle', link: '/gameplay/experience-bottle' },

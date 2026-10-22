@@ -1,6 +1,6 @@
 # Attributes
 
-An **attribute** is what a skill actually buffs. Each skill points at one attribute, and every level applies a modifier to it whose size is `incrementPerLevel × level`, combined using the skill's `operation`.
+An **attribute** is what a skill actually buffs. Each skill points at one attribute, and every level applies a modifier to it whose size is `incrementPerLevel × level` (with the default `linear` [scaling](/config/skill-config#bonus-scaling)), combined using the skill's `operation`. [Milestones](/gameplay/progression#milestones) can add further modifiers to other attributes at set levels.
 
 ## Operations
 
@@ -24,7 +24,7 @@ These behave like any other attribute: the skill keeps a modifier on them in syn
 
 ## Vanilla attributes used
 
-The remaining built-in skills buff standard Minecraft attributes: Movement Speed, Attack Damage, Max Health, Jump Strength, Oxygen Bonus, Armor Toughness, Submerged Mining Speed, Block Interaction Range and Entity Interaction Range.
+The remaining built-in skills buff standard Minecraft attributes: Movement Speed, Attack Damage, Max Health, Jump Strength, Oxygen Bonus, Armor Toughness, Submerged Mining Speed, Block Interaction Range, Entity Interaction Range, Knockback Resistance, Safe Fall Distance, Sneaking Speed, Luck and Burning Time.
 
 ::: tip For developers
 When you register a **new** custom attribute with `ExperienceSkillsAPI.registerAttribute`, Experience Skills adds it to players and keeps the skill's modifier on it in sync. You still have to implement whatever the attribute actually does. See [Adding an attribute](/developer/custom-attributes).

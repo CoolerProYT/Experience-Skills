@@ -4,6 +4,7 @@ import com.coolerpromc.experienceskills.attribute.ModAttributes;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(Player.class)
 public abstract class CommonPlayerMixin {
@@ -67,5 +69,17 @@ public abstract class CommonPlayerMixin {
         }
 
         return original;
+    }
+
+    @ModifyVariable(method = "onEnchantmentPerformed", at = @At("HEAD"), argsOnly = true, ordinal = 0)
+    private int refundEnchantmentCost(int enchantmentCost) {
+        Player player = (Player) (Object) this;
+        if (player instanceof ServerPlayer && enchantmentCost > 0) {
+            double chance = player.getAttributeValue(ModAttributes.ENCHANT_REFUND_CHANCE.holder());
+            if (chance > 0 && player.getRandom().nextDouble() < chance) {
+                return 0;
+            }
+        }
+        return enchantmentCost;
     }
 }
