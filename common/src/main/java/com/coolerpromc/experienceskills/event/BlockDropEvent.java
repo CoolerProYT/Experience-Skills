@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
@@ -23,6 +24,17 @@ public class BlockDropEvent {
             double extra = player.getAttribute(ModAttributes.MINING_LUCK.holder()).getValue();
             for (ItemEntity drop : drops) {
                 drop.getItem().setCount((int) (drop.getItem().getCount() + extra));
+            }
+        }
+
+        if (state.getBlock() instanceof CropBlock crop && crop.isMaxAge(state) && breaker instanceof ServerPlayer player){
+            player.awardStat(ModStats.CROPS_HARVESTED.get(), 1);
+            double chance = player.getAttributeValue(ModAttributes.HARVEST_LUCK.holder());
+            if (chance > 0 && level.getRandom().nextDouble() < chance){
+                for (ItemEntity drop : drops) {
+                    ItemStack stack = drop.getItem();
+                    stack.setCount(Math.min(stack.getCount() * 2, stack.getMaxStackSize()));
+                }
             }
         }
         return false;

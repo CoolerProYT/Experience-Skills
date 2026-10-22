@@ -1,0 +1,25 @@
+{
+  "parent": "experienceskills:journeyman",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:diamond"
+    },
+    "title": {
+      "translate": "advancements.experienceskills.expert.title"
+    },
+    "description": {
+      "translate": "advancements.experienceskills.expert.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

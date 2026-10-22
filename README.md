@@ -2,23 +2,25 @@
 
 > Level up your skills by collecting different experiences.
 
-A multi-loader (Fabric + NeoForge) Minecraft mod for **MC 26.1.2 / Java 25**. It adds parallel, per-skill experience tracks alongside vanilla XP. Each skill has its own coloured experience orb entity, its own XP pool on the player, its own HUD bar, and an attribute bonus that scales with the skill's level.
+A multi-loader (Fabric + NeoForge) Minecraft mod for **MC 26.3 / Java 25**. It adds parallel, per-skill experience tracks alongside vanilla XP. Each skill has its own coloured experience orb entity, its own XP pool on the player, its own HUD bar, and an attribute bonus that scales with the skill's level.
 
-A skill is **declared, not coded**. You name a *stat* to earn XP from and an *attribute* to buff, and everything else — config entry, data attachment, orb entity, renderer, HUD bar, XP generation, level bonus, death drop, command support — is derived for you.
+A skill is **declared, not coded**. You name a *stat* to earn XP from and an *attribute* to buff, and everything else — config entry, data attachment, orb entity, renderer, HUD bar, skills-screen row, level-up toast, XP generation, level bonus, milestones, death penalty, command support — is derived for you.
+
+Player-facing documentation (all 29 built-in skills, the skills screen, milestones, advancements, the Skill Insight potion, every config option) lives in the wiki under [`docs/`](docs/). This README is for developers.
 
 The built-in skills are registered through the same API any addon uses — they're the reference for every technique in this document:
 
 | Skill | Attribute | Driven by stat | Earns XP when | Shows off |
 | --- | --- | --- | --- | --- |
-| `speed` | `MOVEMENT_SPEED` | `experienceskills:block_walked` | You walk/sprint/crouch 100 blocks | combined stat |
-| `breaking_speed` | `BLOCK_BREAK_SPEED` | `experienceskills:block_broken` | You break 10 blocks | event-fed custom stat |
+| `walking_speed` | `MOVEMENT_SPEED` | `experienceskills:block_walked` | You walk/sprint/crouch 100 blocks | combined stat, attribute milestone |
+| `pickaxe_breaking_speed` | `experienceskills:pickaxe_mining_speed` | `experienceskills:block_mined_with_pickaxe` | You mine 50 blocks with a pickaxe | event-fed custom stat, custom attribute |
 | `strength` | `ATTACK_DAMAGE` | `experienceskills:entity_killed` | You kill 20 mobs or players | combined stat |
 | `vitality` | `MAX_HEALTH` | `minecraft:damage_taken` | You take 10 hearts of damage | plain vanilla stat |
+| `luck` | `LUCK` | `minecraft:open_chest` | You open 10 chests | plain vanilla stat and attribute |
 | `jump` | `JUMP_STRENGTH` | `minecraft:jump` | You jump 100 times | **a handler** (adjusts safe-fall) |
-| `oxygen` | `OXYGEN_BONUS` | `experienceskills:under_water_time` | You spend 60s underwater | tick-fed custom stat |
-| `swim_speed` | `WATER_MOVEMENT_EFFICIENCY` | `experienceskills:water_walked` | You move 100 blocks on/under water | combined stat |
-| `fishing_speed` | `experienceskills:lure_speed` | `experienceskills:fishing_time` | You fish for 60s | **custom attribute** |
-| `fishing_luck` | `experienceskills:fishing_luck` | `experienceskills:items_fished` | You reel in 10 catches | **custom attribute** |
+| `oxygen` | `OXYGEN_BONUS` | `experienceskills:under_water_time` | You spend 60s underwater | tick-fed custom stat, effect milestone |
+| `swim_speed` | `experienceskills:swim_speed` | `experienceskills:water_walked` | You move 100 blocks on/under water | combined stat, **custom attribute** |
+| `archery` | `experienceskills:projectile_damage` | `experienceskills:arrows_hit` | Your arrows hit 20 times | mixin-fed stat, **custom attribute** |
 
 The first four columns are all a JSON file needs. The last column points to the three techniques that require a plugin — [combined/custom stats](#6-driving-a-skill-from-your-own-stat), [custom attributes](#7-using-your-own-attribute), and [a handler](#8-effects-beyond-an-attribute-modifier) for effects a plain modifier can't express.
 
@@ -41,10 +43,10 @@ Both routes end up in the same place. Start with the JSON file — if the stat a
 
 Drop a `.json` file into **`config/experienceskills/skills/`** (the directory is created for you on first launch). Every file in there is loaded at startup and becomes a skill.
 
-`config/experienceskills/skills/jump.json`
+`config/experienceskills/skills/hopping.json`
 ```json
 {
-  "name": "jump",
+  "name": "hopping",
   "attribute": "minecraft:jump_strength",
   "defaultConfig": {
     "enabled": true,
@@ -59,7 +61,7 @@ Drop a `.json` file into **`config/experienceskills/skills/`** (the directory is
 }
 ```
 
-That's a complete, working skill: every 100 jumps the player is awarded 3 points of `jump` XP, their `JUMP_STRENGTH` rises by `0.01` per level, and they get a green orb, a HUD bar, a death drop and `/experienceskills` support. No mod, no code.
+That's a complete, working skill: every 100 jumps the player is awarded 3 points of `hopping` XP, their `JUMP_STRENGTH` rises by `0.01` per level, and they get a green orb, a HUD bar, a skills-screen row, a death penalty and `/experienceskills` support. No mod, no code. (Don't reuse a built-in name like `jump`: a JSON file with the same `name` replaces that built-in skill, handler and all.)
 
 | Field | Meaning |
 | --- | --- |
@@ -137,6 +139,14 @@ Whichever route you take, this is the skill. What you supply are the **defaults*
 | `operation` | `add_value` (flat), `add_multiplied_base` (% of the attribute's base) or `add_multiplied_total` (% of the final value). |
 | `maxLevel` | Level cap. Awards stop once reached. |
 | `stat` | The `Identifier` of the **custom stat** that drives this skill. |
+| `dropOnDeath` | Whether dying costs XP in this skill. Ignored under `keepInventory`. |
+| `additionalStats` | *Optional.* Extra stats with weights; progress is `stat + Σ weight × extraStat`. |
+| `curve` | *Optional.* `{ type: vanilla\|linear\|flat\|exponential, multiplier }` — points per level. |
+| `scaling` | *Optional.* `linear`, `sqrt` or `logarithmic` — same bonus at `maxLevel`, different pacing. |
+| `deathPenalty` / `deathDropCap` | *Optional.* Fraction of points lost on death (default `1.0`) and most points dropped as orbs (default `100`). |
+| `milestones` | *Optional.* `[{ level, effect, amplifier }]` or `[{ level, attribute, amount, operation }]` perks. |
+
+The optional fields can be left out of JSON and are written back with their defaults. In Java, the nine-argument constructor still works; chain `withAdditionalStat`, `withCurve`, `withScaling`, `withDeathPenalty` and `withMilestones` for the rest.
 
 ---
 
@@ -202,7 +212,7 @@ Three things to get right:
 - **Award it on the server** (`ServerPlayer`), or nothing happens.
 - **Add a lang key**, or it renders as a raw key in the Statistics screen. The format is `stat.<namespace>.<path>` — so `"stat.mymod.blocks_smelted": "Blocks Smelted"`.
 
-If your XP source isn't a countable action at all, `AbstractExperienceOrb.award(serverLevel, pos, points, type)` is public and can be called directly. It splits the amount into vanilla-sized orbs, merges into nearby ones, skips disabled types, and spawns the result. But prefer a stat: you get persistence, death-safety and the Statistics screen for nothing.
+If your XP source isn't a countable action at all, `ExperienceSkillsAPI.award(serverLevel, pos, points, type)` is public and can be called directly. It splits the amount into vanilla-sized orbs, merges into nearby ones, skips disabled types, and spawns the result. But prefer a stat: you get persistence, death-safety and the Statistics screen for nothing.
 
 ---
 
@@ -261,14 +271,17 @@ Every registered skill, from either route, gets all of this. **You write none of
 | XP data attachment | `ModDataAttachments.init()` | `name + "_experience"`, int |
 | `ExperienceType` | `ExperienceType`'s static block | binds config + attachment + attribute |
 | Entity type | `ModEntities.init()` | `name + "_experience_orb"` |
-| Orb entity | — | the shared `AbstractExperienceOrb`, bound to your type |
+| Orb entity | — | the shared `ModExperienceOrb`, bound to your type |
 | XP generation | `StatAwardEvent` | driven by `config.stat()` |
-| The level bonus | `AbstractExperienceOrb.updateSkillStatus()` | `level × incrementPerLevel` as an `AttributeModifier` (id `<name>_skill_bonus`) using your `operation` |
+| The level bonus | `SkillManager.updateSkillStatus()` | `bonusForLevel(level)` (your `scaling` applied to `incrementPerLevel`) as an `AttributeModifier` (id `<name>_skill_bonus`) using your `operation` |
+| Milestones | `SkillMilestones.apply()` | modifier ids `<name>_milestone_<index>`; effects are infinite, ambient and re-applied every 5 s |
 | Entity renderer | `ExperienceSkillsClient.initRenderer()` | shared renderer, tinted by `rgbColor` |
 | HUD bar | `HudRenderer` | shared bar, tinted by `rgbColor` |
-| Death drop | `LivingDeathEvent` | `min(level × 7, 100)` points, skipped if disabled |
+| Death penalty | `LivingDeathEvent` | loses `deathPenalty` of the points, drops `min(level × 7, deathDropCap)` as orbs |
+| Skills screen row, level-up toast | `SkillsScreen`, `ClientSkillState` | name from `skill.experienceskills.<name>`, falling back to the id |
+| JEI info page, Jade orb tooltip | `compat/` | only when those mods are installed |
 | Command `<type>` argument | `ExperienceTypeArgument` | suggestions from `ExperienceType.ALL` |
-| HUD cycle slot | `ExperienceType.next()` | enabled types only |
+| HUD bar choice | `SkillsScreen` row click | enabled types only; clicking the selected row returns to `VANILLA` |
 
 ### Naming convention (load-bearing)
 
@@ -296,25 +309,32 @@ plugin  ────┘                          / entity type / renderer / HUD 
    player earns a stat  (vanilla, or your own awardStat call)
               │
               ▼
-   StatAwardEvent  →  does config.stat() match?  →  did the total cross a multiple
-                                                     of xpAwardActionCount?
-              │
+   StatAwardEvent  →  is it the skill's stat or one of its additionalStats?
+              │       did the weighted total cross a multiple of xpAwardActionCount?
+              │       SkillEvents.MODIFY_GAIN (e.g. Skill Insight ×2)
               ▼
-   AbstractExperienceOrb.award(level, pos, points, type)
-              │   splits into vanilla-sized orbs, merges nearby, skipped if disabled
+   ModExperienceOrb.award(level, pos, points, type)
+              │   splits into vanilla-sized orbs, merges only with orbs of the same skill
               ▼
    orb spawned  ──drifts to player──►  playerTouch  (ignored at maxLevel)
-                                          │  attachment += value, level-up sound
+                                          │
                                           ▼
-                                   updateSkillStatus()  →  modifier = level × incrementPerLevel
+                       SkillManager.addPoints()  ──►  shared with nearby players (if enabled)
+                                          │
+                                          ▼
+                       SkillManager.setPoints()  →  updateSkillStatus()  (bonus, handler, milestones)
+                                          │
+                                          ▼  level changed?
+                       SkillEvents.LEVEL_CHANGE  →  advancements, scoreboard, your listeners
 ```
 
-- **Server start** validates every skill's `stat` against the custom-stat registry (`ServerStartedEvent`), so a typo fails fast.
-- **Login and command changes** call `updateAllSkillStatus(player)`, re-applying every skill's bonus, so they survive relogs.
-- **Death** drops part of each skill's XP back as orbs; the XP attachment is `copyOnDeath = false`, so points are lost either way.
-- **Levels/points** use vanilla's curve, reimplemented in `XpMath`.
-- **Commands**: `/experienceskills {add|set|query} <targets> <type> <amount> [points|levels]`.
-- **HUD**: one bar at a time, cycled with **R** (`ModKeyMappings.CYCLE_CONTEXTUAL_BAR`) via `ExperienceType.next()`, which skips disabled types. `ExperienceType.VANILLA` is a special entry with no attachment and no attribute: it means "show the vanilla XP bar" and has no orb.
+- **Every points change** goes through `SkillManager.setPoints`, which is what keeps bonuses, milestones and listeners in step.
+- **Server start** validates every skill's `stat` and `additionalStats` against the custom-stat registry (`ServerStartedEvent`), so a typo fails fast.
+- **Login and respawn** send the server's live configs to the client (`SkillSync`, via a target-only synced attachment) and re-apply every skill's bonus. A second synced attachment carries each skill's progress towards its next award, refreshed once a second.
+- **Death** applies `deathPenalty` to the dying player; XP attachments are always `copyOnDeath`, so whatever is left carries over to the respawned player.
+- **Levels/points** follow each skill's `curve` (`XpCurve`); the default `vanilla` curve is vanilla's, reimplemented in `XpMath`.
+- **Commands**: `/experienceskills {add|set|query} <targets> <type> <amount> [points|levels]` (operators) and `/experienceskills transfer <from> <to> <points>` (everyone).
+- **HUD**: one bar at a time, stored in `HudRenderer.currentType`. **R** (`ModKeyMappings.OPEN_SKILLS_SCREEN`) opens the skills screen, where clicking a skill selects its bar and clicking it again goes back to `ExperienceType.VANILLA`. That is a special entry with no attachment and no attribute: it means "show the vanilla XP bar" and has no orb.
 
 ---
 

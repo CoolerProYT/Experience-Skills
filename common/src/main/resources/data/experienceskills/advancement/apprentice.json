@@ -1,0 +1,24 @@
+{
+  "parent": "experienceskills:root",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:experience_bottle"
+    },
+    "title": {
+      "translate": "advancements.experienceskills.apprentice.title"
+    },
+    "description": {
+      "translate": "advancements.experienceskills.apprentice.description"
+    }
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

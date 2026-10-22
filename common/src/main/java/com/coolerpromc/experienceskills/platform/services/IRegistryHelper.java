@@ -16,7 +16,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -52,6 +54,8 @@ public interface IRegistryHelper {
     }
     RegistryHandler<Attribute, Attribute> registerAttribute(String namespace, String name, Attribute attribute);
     List<RegistryHandler<Attribute, Attribute>> getRegisteredAttributes();
+    RegistryHandler<MobEffect, MobEffect> registerMobEffect(String name, Supplier<MobEffect> effect);
+    RegistryHandler<Potion, Potion> registerPotion(String name, Supplier<Potion> potion);
 
     static ResourceKey<Block> blockKey(String name) {
         return ResourceKey.create(Registries.BLOCK, Constants.id(name));

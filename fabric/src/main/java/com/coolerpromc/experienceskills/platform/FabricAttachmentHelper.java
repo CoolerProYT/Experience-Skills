@@ -44,9 +44,11 @@ public class FabricAttachmentHelper implements IAttachmentHelper {
 
     private static <T> AttachmentType<T> register(AttachmentKey<T> key){
         return AttachmentRegistry.create(Constants.id(key.id()), builder -> {
-            builder.persistent(key.codec());
+            if (key.persistent()){
+                builder.persistent(key.codec());
+            }
             builder.initializer(key.defaultValue());
-            builder.syncWith(key.streamCodec(), AttachmentSyncPredicate.all());
+            builder.syncWith(key.streamCodec(), key.syncTargetOnly() ? AttachmentSyncPredicate.targetOnly() : AttachmentSyncPredicate.all());
             if (key.copyOnDeath()){
                 builder.copyOnDeath();
             }
