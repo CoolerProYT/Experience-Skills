@@ -6,5 +6,8 @@ import net.minecraft.network.codec.StreamCodec;
 
 import java.util.function.Supplier;
 
-public record AttachmentKey<T>(String id, Codec<T> codec, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultValue, boolean copyOnDeath) {
+public record AttachmentKey<T>(String id, Codec<T> codec, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultValue, boolean copyOnDeath, boolean persistent, boolean syncTargetOnly){
+    public AttachmentKey(String id, Codec<T> codec, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec, Supplier<T> defaultValue, boolean copyOnDeath){
+        this(id, codec, streamCodec, defaultValue, copyOnDeath, true, false);
+    }
 }

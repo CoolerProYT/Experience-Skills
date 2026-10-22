@@ -1,9 +1,7 @@
 package com.coolerpromc.experienceskills.client.hud;
 
-import com.coolerpromc.experienceskills.api.type.ExperienceTypeRegistry;
+import com.coolerpromc.experienceskills.api.ExperienceSkillsAPI;
 import com.coolerpromc.experienceskills.client.hud.custom.ModExperienceBarRenderer;
-import com.coolerpromc.experienceskills.config.ModCommonConfig;
-import com.coolerpromc.experienceskills.data.attachment.ModDataAttachments;
 import com.coolerpromc.experienceskills.api.type.ExperienceType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -17,9 +15,7 @@ public class HudRenderer {
     public static ExperienceType currentType = ExperienceType.VANILLA;
 
     static {
-        ExperienceTypeRegistry.REGISTERED_TYPES.forEach((s, registryHolder) -> {
-            renderers.add(new ModExperienceBarRenderer(Minecraft.getInstance(), ModCommonConfig.getConfigByPath(s).orElse(registryHolder.config()).rgbColor(), ExperienceType.byName(s).orElse(null), ModDataAttachments.intById(s + "_experience")));
-        });
+        ExperienceSkillsAPI.getAllTypes().forEach(type -> renderers.add(new ModExperienceBarRenderer(Minecraft.getInstance(), type)));
     }
 
     public static void extractSkillsExperienceBar(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {

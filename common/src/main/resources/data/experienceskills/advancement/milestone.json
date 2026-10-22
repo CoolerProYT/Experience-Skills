@@ -1,0 +1,24 @@
+{
+  "parent": "experienceskills:root",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:beacon"
+    },
+    "title": {
+      "translate": "advancements.experienceskills.milestone.title"
+    },
+    "description": {
+      "translate": "advancements.experienceskills.milestone.description"
+    }
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

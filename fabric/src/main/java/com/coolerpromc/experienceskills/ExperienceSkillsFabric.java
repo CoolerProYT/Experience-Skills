@@ -2,6 +2,7 @@ package com.coolerpromc.experienceskills;
 
 import com.coolerpromc.experienceskills.api.IExperienceSkillsPlugin;
 import com.coolerpromc.experienceskills.command.ModCommands;
+import com.coolerpromc.experienceskills.effect.ModEffects;
 import com.coolerpromc.experienceskills.event.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -9,6 +10,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.registry.FabricPotionBrewingBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.ArrayList;
@@ -29,5 +31,6 @@ public class ExperienceSkillsFabric implements ModInitializer {
         PlayerBlockBreakEvents.AFTER.register(PlayerBlockBreakEvent::afterBreak);
         ServerLifecycleEvents.SERVER_STARTED.register(ServerStartedEvent::onServerStarted);
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> PlayerRespawnEvent.onPlayerRespawn(newPlayer));
+        FabricPotionBrewingBuilder.BUILD.register(ModEffects::registerBrewing);
     }
 }

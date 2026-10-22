@@ -1,11 +1,8 @@
 package com.coolerpromc.experienceskills.client.hud.custom;
 
 import com.coolerpromc.experienceskills.Constants;
-import com.coolerpromc.experienceskills.data.attachment.helper.AttachmentKey;
-import com.coolerpromc.experienceskills.entity.custom.ModExperienceOrb;
-import com.coolerpromc.experienceskills.platform.Services;
 import com.coolerpromc.experienceskills.api.type.ExperienceType;
-import com.coolerpromc.experienceskills.util.XpMath;
+import com.coolerpromc.experienceskills.skill.SkillManager;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -17,7 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 
-public record ModExperienceBarRenderer(Minecraft minecraft, int color, ExperienceType type, AttachmentKey<Integer> key) implements ContextualBar {
+public record ModExperienceBarRenderer(Minecraft minecraft, ExperienceType type) implements ContextualBar {
     private static final Identifier EXPERIENCE_BAR_BACKGROUND_SPRITE = Constants.id("hud/experience_bar_background");
     private static final Identifier EXPERIENCE_BAR_PROGRESS_SPRITE = Constants.id("hud/experience_bar_progress");
 
@@ -27,10 +24,10 @@ public record ModExperienceBarRenderer(Minecraft minecraft, int color, Experienc
         int left = this.left(this.minecraft.getWindow());
         int top = this.top(this.minecraft.getWindow());
 
-        int points = Services.ATTACHMENT.get(player, key);
-        int level = XpMath.getLevel(points);
-        int xpNeededForNextLevel = XpMath.getXpNeededForNextLevel(level);
-        float progressFraction = ModExperienceOrb.getProgress(player, key);
+        int color = type.color();
+        int level = SkillManager.getLevel(player, type);
+        int xpNeededForNextLevel = type.pointsForNextLevel(level);
+        float progressFraction = SkillManager.getProgress(player, type);
 
         if (xpNeededForNextLevel > 0) {
             int progress = (int)(progressFraction * 183.0F);
@@ -39,7 +36,7 @@ public record ModExperienceBarRenderer(Minecraft minecraft, int color, Experienc
                 graphics.blitSprite(RenderPipelines.GUI_TEXTURED, EXPERIENCE_BAR_PROGRESS_SPRITE, 182, 5, 0, 0, left, top, progress, 5, ARGB.color(0xFF, color));
             }
             if (level > 0){
-                extractExperienceLevel(graphics, this.minecraft.font, level);
+                extractExperienceLevel(graphics, this.minecraft.font, level, color);
             }
         }
     }
@@ -48,7 +45,7 @@ public record ModExperienceBarRenderer(Minecraft minecraft, int color, Experienc
     public void extractRenderState(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
     }
 
-    private void extractExperienceLevel(GuiGraphicsExtractor graphics, Font font, int experienceLevel) {
+    private void extractExperienceLevel(GuiGraphicsExtractor graphics, Font font, int experienceLevel, int color) {
         Component str = Component.translatable("gui.experience.level", experienceLevel);
         int x = (graphics.guiWidth() - font.width(str)) / 2;
         int y = graphics.guiHeight() - 24 - 9 - 2;

@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -20,7 +20,7 @@ import java.util.Map;
 @ApiStatus.Internal
 public class ExperienceTypeRegistry implements IExperienceTypeRegistry{
     public static final ExperienceTypeRegistry INSTANCE = new ExperienceTypeRegistry();
-    public static final Map<String, RegistryHolder> REGISTERED_TYPES = new HashMap<>();
+    public static final Map<String, RegistryHolder> REGISTERED_TYPES = new LinkedHashMap<>();
 
     @Override
     public void register(String name, SkillsConfig config, Holder<Attribute> attributeHolder, Handler handler) {

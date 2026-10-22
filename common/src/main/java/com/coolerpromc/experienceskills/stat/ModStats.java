@@ -22,6 +22,10 @@ public class ModStats {
     public static final RegistryHandler<Identifier, Identifier> BLOCK_MINED_WITH_AXE = Services.REGISTRY.registerStat("block_mined_with_axe");
     public static final RegistryHandler<Identifier, Identifier> BLOCK_MINED_WITH_HOE = Services.REGISTRY.registerStat("block_mined_with_hoe");
     public static final RegistryHandler<Identifier, Identifier> BLOCK_MINED_WHEN_FLOATING = Services.REGISTRY.registerStat("block_mined_when_floating");
+    public static final RegistryHandler<Identifier, Identifier> TIME_ON_FIRE = Services.REGISTRY.registerStat("time_on_fire");
+    public static final RegistryHandler<Identifier, Identifier> ARROWS_HIT = Services.REGISTRY.registerStat("arrows_hit");
+    public static final RegistryHandler<Identifier, Identifier> CROPS_HARVESTED = Services.REGISTRY.registerStat("crops_harvested");
+    public static final RegistryHandler<Identifier, Identifier> FOOD_EATEN = Services.REGISTRY.registerStat("food_eaten");
 
     public static void init(){
         Constants.LOGGER.info("Registering stats.");

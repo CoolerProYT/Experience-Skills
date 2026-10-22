@@ -4,9 +4,13 @@
   "package": "com.coolerpromc.experienceskills.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "AbstractArrowMixin",
+    "AnimalMixin",
     "CommonPlayerMixin",
     "FishingHookMixin",
-    "LivingEntityMixin"
+    "FoodPropertiesMixin",
+    "LivingEntityMixin",
+    "VillagerMixin"
   ],
   "server": [],
   "injectors": {
@@ -16,4 +20,3 @@
     "requireAnnotations": true
   }
 }
-

@@ -1,18 +1,13 @@
 package com.coolerpromc.experienceskills.entity.custom;
 
-import com.coolerpromc.experienceskills.Constants;
 import com.coolerpromc.experienceskills.api.type.ExperienceType;
-import com.coolerpromc.experienceskills.config.ModCommonConfig;
 import com.coolerpromc.experienceskills.data.attachment.helper.AttachmentKey;
 import com.coolerpromc.experienceskills.entity.ModEntities;
-import com.coolerpromc.experienceskills.platform.Services;
-import com.coolerpromc.experienceskills.platform.util.RegistryHandler;
-import com.coolerpromc.experienceskills.util.XpMath;
+import com.coolerpromc.experienceskills.skill.SkillManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -21,8 +16,6 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.entity.EntityTypeTest;
@@ -170,17 +163,19 @@ public class ModExperienceOrb extends Entity {
         while (amount > 0) {
             int newCount = getExperienceValue(amount);
             amount -= newCount;
+            if (!type.isEnabled() || tryMergeToExisting(level, pos, newCount, type)) continue;
+
             ModExperienceOrb orb = ModEntities.byName(type.getSerializedName() + "_experience_orb").get().create(level, EntitySpawnReason.TRIGGERED);
-            if (!tryMergeToExisting(level, pos, newCount) && orb.canAward()) {
+            if (orb != null) {
                 orb.spawn(level, pos, roughDirection, newCount);
             }
         }
     }
 
-    private static boolean tryMergeToExisting(ServerLevel level, Vec3 pos, int value) {
+    private static boolean tryMergeToExisting(ServerLevel level, Vec3 pos, int value, ExperienceType type) {
         AABB box = AABB.ofSize(pos, 1.0, 1.0, 1.0);
         int id = level.getRandom().nextInt(40);
-        List<ModExperienceOrb> orbs = level.getEntities(EntityTypeTest.forClass(ModExperienceOrb.class), box, orbx -> canMerge(orbx, id, value));
+        List<ModExperienceOrb> orbs = level.getEntities(EntityTypeTest.forClass(ModExperienceOrb.class), box, orbx -> orbx.experienceType == type && canMerge(orbx, id, value));
         if (!orbs.isEmpty()) {
             ModExperienceOrb orb = orbs.getFirst();
             orb.count++;
@@ -192,7 +187,7 @@ public class ModExperienceOrb extends Entity {
     }
 
     private boolean canMerge(ModExperienceOrb orb) {
-        return orb != this && canMerge(orb, this.getId(), this.getValue());
+        return orb != this && orb.experienceType == this.experienceType && canMerge(orb, this.getId(), this.getValue());
     }
 
     private static boolean canMerge(ModExperienceOrb orb, int id, int value) {
@@ -252,10 +247,12 @@ public class ModExperienceOrb extends Entity {
 
     @Override
     public void playerTouch(@NonNull Player player) {
-        if (player instanceof ServerPlayer serverPlayer && !reachedMaxLevel(serverPlayer, this.experienceType.getKey(), this.experienceType.getMaxLevel())) {
+        if (player instanceof ServerPlayer serverPlayer && this.canAward() && !SkillManager.reachedMaxLevel(serverPlayer, this.experienceType)) {
             if (player.takeXpDelay == 0) {
                 player.takeXpDelay = 2;
-                this.addExperience(serverPlayer, this.getValue(), this.getExperienceType().getKey());
+                serverPlayer.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.1F, (this.random.nextFloat() - this.random.nextFloat()) * 0.35F + 0.9F);
+                SkillManager.addPoints(serverPlayer, this.experienceType, this.getValue(), true);
+                SkillManager.shareWithNearby(serverPlayer, this.experienceType, this.getValue());
 
                 this.count--;
                 if (this.count == 0) {
@@ -341,18 +338,6 @@ public class ModExperienceOrb extends Entity {
         return this.interpolation;
     }
 
-    public void addExperience(ServerPlayer entity, int amount, AttachmentKey<Integer> key){
-        int original = Services.ATTACHMENT.get(entity, key, 0);
-        int newAmount = original + amount;
-        Services.ATTACHMENT.set(entity, key, newAmount);
-        float vol = newAmount > 30 ? 1.0F : newAmount / 30.0F;
-
-        if (canAward()){
-            entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PLAYER_LEVELUP, entity.getSoundSource(), vol * 0.75F, 1.0F);
-            updateSkillStatus(entity, key);
-        }
-    }
-
     public void spawn(ServerLevel level, Vec3 pos, Vec3 roughly, int value){
         if (!level.isClientSide()) {
             this.setYRot(this.random.nextFloat() * 360.0F);
@@ -376,24 +361,6 @@ public class ModExperienceOrb extends Entity {
         level.addFreshEntity(this);
     }
 
-    public void updateSkillStatus(ServerPlayer entity, AttachmentKey<Integer> key){
-        int level = getLevel(entity, key);
-        double extraSpeed = level * ModCommonConfig.getConfigByPath(getExperienceType().getSerializedName()).get().incrementPerLevel();
-
-        AttributeInstance attr = entity.getAttribute(getExperienceType().getAttributeHolder());
-        if (attr != null){
-            Identifier id = Constants.id(getExperienceType().getSerializedName() + "_skill_bonus");
-            AttributeModifier modifier = new AttributeModifier(id, extraSpeed, getExperienceType().operation());
-            attr.removeModifier(id);
-            attr.addOrUpdateTransientModifier(modifier);
-            getExperienceType().onExperiencePointChange(entity, level);
-
-            if (!enabled()){
-                attr.removeModifier(id);
-            }
-        }
-    }
-
     public boolean canAward(){
         return enabled();
     }
@@ -403,69 +370,43 @@ public class ModExperienceOrb extends Entity {
     }
 
     public static int getLevel(LivingEntity entity, AttachmentKey<Integer> key) {
-        int points = Services.ATTACHMENT.get(entity, key, 0);
-        return XpMath.getLevel(points);
+        return ExperienceType.byKey(key).map(type -> SkillManager.getLevel(entity, type)).orElse(0);
     }
 
     public static float getProgress(LivingEntity entity, AttachmentKey<Integer> key) {
-        int points = Services.ATTACHMENT.get(entity, key, 0);
-        return XpMath.getProgress(points);
+        return ExperienceType.byKey(key).map(type -> SkillManager.getProgress(entity, type)).orElse(0f);
     }
 
     public static int getXpNeededForNextLevel(LivingEntity entity, AttachmentKey<Integer> key){
-        int level = getLevel(entity, key);
-        return XpMath.getXpNeededForNextLevel(level);
+        return ExperienceType.byKey(key).map(type -> type.pointsForNextLevel(SkillManager.getLevel(entity, type))).orElse(0);
     }
 
     public static void setLevel(ServerPlayer entity, int level, AttachmentKey<Integer> key){
-        int points = XpMath.getTotalForLevel(level);
-        Services.ATTACHMENT.set(entity, key, points);
-        updateAllSkillStatus(entity);
+        ExperienceType.byKey(key).ifPresent(type -> SkillManager.setPoints(entity, type, type.totalPointsForLevel(level), false));
     }
 
     public static void setPoints(ServerPlayer entity, int points, AttachmentKey<Integer> key){
-        int level = getLevel(entity, key);
-        int levelXpPoints = XpMath.getTotalForLevel(level);
-        Services.ATTACHMENT.set(entity, key, levelXpPoints + points);
-        updateAllSkillStatus(entity);
+        ExperienceType.byKey(key).ifPresent(type -> SkillManager.setPoints(entity, type, type.totalPointsForLevel(SkillManager.getLevel(entity, type)) + points, false));
     }
 
     public static void giveExperiencePoints(ServerPlayer player, Integer integer, ExperienceType experienceType) {
-        AttachmentKey<Integer> key = experienceType.getKey();
-        int original = Services.ATTACHMENT.get(player, key);
-        int newAmount = original + integer;
-        Services.ATTACHMENT.set(player, key, newAmount);
-        updateAllSkillStatus(player);
+        SkillManager.addPoints(player, experienceType, integer, false);
     }
 
     public static void giveExperienceLevels(ServerPlayer player, Integer integer, ExperienceType experienceType) {
-        AttachmentKey<Integer> key = experienceType.getKey();
-        int level = getLevel(player, key);
-        int targetLevel = level + integer;
-        int currentTotalXp = Services.ATTACHMENT.get(player, key, 0);
-        int targetTotalXp = XpMath.getTotalForLevel(targetLevel);
-        giveExperiencePoints(player, targetTotalXp - currentTotalXp, experienceType);
+        int targetLevel = Math.max(0, SkillManager.getLevel(player, experienceType) + integer);
+        SkillManager.setPoints(player, experienceType, experienceType.totalPointsForLevel(targetLevel), false);
     }
 
     public static int getCurrentLevelPoints(ServerPlayer player, ExperienceType experienceType){
-        AttachmentKey<Integer> key = experienceType.getKey();
-        int currentTotalXp = Services.ATTACHMENT.get(player, key, 0);
-        int levelXp = XpMath.getTotalForLevel(getLevel(player, key));
-
-        return currentTotalXp - levelXp;
+        return SkillManager.getPointsIntoLevel(player, experienceType);
     }
 
     public static void updateAllSkillStatus(ServerPlayer player){
-        for (RegistryHandler.Entities<? extends ModExperienceOrb> entities : ModEntities.ALL){
-            ModExperienceOrb orb = entities.get().create(player.level(), EntitySpawnReason.LOAD);
-            if (orb != null){
-                orb.updateSkillStatus(player, orb.getExperienceType().getKey());
-            }
-        }
+        SkillManager.updateAll(player);
     }
 
     public static boolean reachedMaxLevel(ServerPlayer player, AttachmentKey<Integer> key, int maxLevel){
-        int level = getLevel(player, key);
-        return level >= maxLevel;
+        return getLevel(player, key) >= maxLevel;
     }
 }

@@ -3,6 +3,7 @@ package com.coolerpromc.experienceskills;
 import com.coolerpromc.experienceskills.api.ExperienceSkillsPlugin;
 import com.coolerpromc.experienceskills.api.IExperienceSkillsPlugin;
 import com.coolerpromc.experienceskills.command.ModCommands;
+import com.coolerpromc.experienceskills.effect.ModEffects;
 import com.coolerpromc.experienceskills.event.*;
 import com.coolerpromc.experienceskills.platform.NeoForgeRegistryHelper;
 import com.coolerpromc.experienceskills.stat.ModStats;
@@ -14,6 +15,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -112,5 +114,10 @@ public class ExperienceSkillsNeoForge {
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         PlayerRespawnEvent.onPlayerRespawn(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onRegisterBrewingRecipes(RegisterBrewingRecipesEvent event) {
+        ModEffects.registerBrewing(event.getBuilder());
     }
 }

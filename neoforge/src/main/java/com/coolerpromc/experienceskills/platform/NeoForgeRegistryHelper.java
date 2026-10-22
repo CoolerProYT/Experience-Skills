@@ -18,7 +18,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -46,6 +48,8 @@ public class NeoForgeRegistryHelper implements IRegistryHelper {
     public static final DeferredRegister<ArgumentTypeInfo<?, ?>> ARGUMENT_TYPE_INFOS = DeferredRegister.create(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Constants.MODID);
     public static final DeferredRegister<Identifier> STATS = DeferredRegister.create(BuiltInRegistries.CUSTOM_STAT, Constants.MODID);
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, Constants.MODID);
+    public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, Constants.MODID);
+    public static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(BuiltInRegistries.POTION, Constants.MODID);
     private static final List<DeferredRegister<?>> DEFERRED_REGISTERS = new ArrayList<>();
 
     public static final List<RegistryHandler<Attribute, Attribute>> REGISTERED_ATTRIBUTES = new ArrayList<>();
@@ -129,6 +133,18 @@ public class NeoForgeRegistryHelper implements IRegistryHelper {
         return registryHandler;
     }
 
+    @Override
+    public RegistryHandler<MobEffect, MobEffect> registerMobEffect(String name, Supplier<MobEffect> effect) {
+        DeferredHolder<MobEffect, MobEffect> deferredHolder = MOB_EFFECTS.register(name, effect);
+        return () -> deferredHolder;
+    }
+
+    @Override
+    public RegistryHandler<Potion, Potion> registerPotion(String name, Supplier<Potion> potion) {
+        DeferredHolder<Potion, Potion> deferredHolder = POTIONS.register(name, potion);
+        return () -> deferredHolder;
+    }
+
     public static void register(IEventBus eventBus){
         BLOCKS.register(eventBus);
         ITEMS.register(eventBus);
@@ -140,6 +156,8 @@ public class NeoForgeRegistryHelper implements IRegistryHelper {
         ARGUMENT_TYPE_INFOS.register(eventBus);
         STATS.register(eventBus);
         ATTRIBUTES.register(eventBus);
+        MOB_EFFECTS.register(eventBus);
+        POTIONS.register(eventBus);
         DEFERRED_REGISTERS.forEach(d -> d.register(eventBus));
     }
 }
