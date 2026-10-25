@@ -5,6 +5,7 @@ import com.coolerpromc.experienceskills.skill.SkillManager;
 import com.coolerpromc.experienceskills.skill.SkillScoreboard;
 import com.coolerpromc.experienceskills.skill.SkillSync;
 import com.coolerpromc.experienceskills.stat.ModStats;
+import com.coolerpromc.experienceskills.util.ISavedHealthHolder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -15,9 +16,19 @@ public class PlayerJoinEvent {
         backfill(player, ModStats.WATER_WALKED.get(), Stats.WALK_ON_WATER_ONE_CM, Stats.WALK_UNDER_WATER_ONE_CM, Stats.SWIM_ONE_CM);
         SkillSync.sendConfig(player);
         SkillManager.updateAll(player);
+        restoreSavedHealth(player);
         SkillSync.updateProgress(player);
         SkillAdvancements.check(player);
         SkillScoreboard.syncAll(player);
+    }
+
+    private static void restoreSavedHealth(ServerPlayer player){
+        if (!(player instanceof ISavedHealthHolder holder)) return;
+        float saved = holder.getSavedHealth();
+        holder.clearSavedHealth();
+        if (player.isAlive() && saved > player.getHealth()){
+            player.setHealth(saved);
+        }
     }
 
     private static void backfill(ServerPlayer player, Identifier target, Identifier... sources) {
