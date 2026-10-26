@@ -1,3 +1,7 @@
-## 26.2.0.4
+## 26.2.0.5
 ### Fixed
-- Health above the normal maximum (from Vitality or other health bonuses) is no longer lost when rejoining a world.
+- Skill step-up milestones no longer interfere with sneaking at block edges.
+
+### Added
+- General config option `milestones.stepUp` to disable step-up milestones.
+- Client config option `orbPickupSounds` to mute skill experience orb collection sounds.
