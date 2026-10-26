@@ -15,6 +15,7 @@ public class ModGeneralConfig {
     public static ConfigValue<Boolean> TRANSFER_ENABLED;
     public static ConfigValue<Double> TRANSFER_EFFICIENCY;
     public static ConfigValue<Boolean> SCOREBOARD_ENABLED;
+    public static ConfigValue<Boolean> STEP_UP_MILESTONES;
 
     public static void init(){
         ConfigBuilder builder = ConfigSpec.builder(Constants.MODID, ConfigFormat.JSON5).side(ConfigSide.COMMON).suffix("general")
@@ -30,6 +31,9 @@ public class ModGeneralConfig {
             "The fraction of transferred experience that arrives in the target skill; the rest is lost.");
         SCOREBOARD_ENABLED = builder.defineBoolean("scoreboard.enabled", false,
             "Mirror every player's skill levels into scoreboard objectives named es_<skill>, so datapacks and command blocks can read them.");
+
+        STEP_UP_MILESTONES = builder.defineBoolean("milestones.stepUp", true,
+            "Allow skill milestones to increase step height. Turn off to disable automatic one-block step-up. Restart the server/world after changing this setting.");
 
         CONFIG = builder.build();
     }

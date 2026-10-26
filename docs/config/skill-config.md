@@ -132,9 +132,15 @@ Settings that apply to every skill live in `config/experienceskills-general.json
 | `sharedXp.radius` | `16.0` | How close, in blocks, another player must be to get a share. |
 | `transfer.enabled` | `true` | Whether players can move experience between their skills. |
 | `transfer.efficiency` | `0.5` | The fraction of transferred experience that arrives; the rest is lost. |
+| `milestones.stepUp` | `true` | Allow step-height milestones such as Walking Speed level 50. Set to `false` and restart the server/world to disable automatic one-block step-up. Sneaking always ignores skill milestone step-height bonuses. |
 | `scoreboard.enabled` | `false` | Mirror skill levels into `es_<skill>` scoreboard objectives. |
 
-Client-only settings, such as turning off level-up toasts with `levelUpToasts`, are in `config/experienceskills-client.json5`.
+Client-only settings are in `config/experienceskills-client.json5`:
+
+| Setting | Default | Description |
+| --- | --- | --- |
+| `levelUpToasts` | `true` | Show a toast when a skill levels up. |
+| `orbPickupSounds` | `true` | Play skill experience orb collection sounds. Set to `false` to mute them for your client, including nearby players' skill orb pickups. Vanilla XP pickup and level-up sounds are unaffected. |
 
 ## Common Tweaks
 

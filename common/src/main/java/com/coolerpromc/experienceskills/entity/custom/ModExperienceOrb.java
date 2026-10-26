@@ -1,6 +1,7 @@
 package com.coolerpromc.experienceskills.entity.custom;
 
 import com.coolerpromc.experienceskills.api.type.ExperienceType;
+import com.coolerpromc.experienceskills.config.ModClientConfig;
 import com.coolerpromc.experienceskills.data.attachment.helper.AttachmentKey;
 import com.coolerpromc.experienceskills.entity.ModEntities;
 import com.coolerpromc.experienceskills.skill.SkillManager;
@@ -31,6 +32,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 public class ModExperienceOrb extends Entity {
+    private static final byte PICKUP_SOUND_EVENT = 1;
     protected static final EntityDataAccessor<Integer> DATA_VALUE = SynchedEntityData.defineId(ModExperienceOrb.class, EntityDataSerializers.INT);
     private int age = 0;
     private int health = 5;
@@ -248,7 +250,7 @@ public class ModExperienceOrb extends Entity {
         if (player instanceof ServerPlayer serverPlayer && this.canAward() && !SkillManager.reachedMaxLevel(serverPlayer, this.experienceType)) {
             if (player.takeXpDelay == 0) {
                 player.takeXpDelay = 2;
-                serverPlayer.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.1F, (this.random.nextFloat() - this.random.nextFloat()) * 0.35F + 0.9F);
+                serverPlayer.level().broadcastEntityEvent(this, PICKUP_SOUND_EVENT);
                 SkillManager.addPoints(serverPlayer, this.experienceType, this.getValue(), true);
                 SkillManager.shareWithNearby(serverPlayer, this.experienceType, this.getValue());
 
@@ -257,6 +259,19 @@ public class ModExperienceOrb extends Entity {
                     this.discard();
                 }
             }
+        }
+    }
+
+    @Override
+    public void handleEntityEvent(byte event){
+        if (event == PICKUP_SOUND_EVENT){
+            if (this.level().isClientSide() && ModClientConfig.ORB_PICKUP_SOUNDS.get()){
+                this.level().playLocalSound(this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.1F,
+                    (this.random.nextFloat() - this.random.nextFloat()) * 0.35F + 0.9F, false);
+            }
+        } else {
+            super.handleEntityEvent(event);
         }
     }
 

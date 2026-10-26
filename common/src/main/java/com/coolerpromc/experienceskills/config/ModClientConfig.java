@@ -11,12 +11,15 @@ public class ModClientConfig {
     public static ConfigSpec CONFIG;
 
     public static ConfigValue<Boolean> LEVEL_UP_TOASTS;
+    public static ConfigValue<Boolean> ORB_PICKUP_SOUNDS;
 
     public static void init(){
         ConfigBuilder builder = ConfigSpec.builder(Constants.MODID, ConfigFormat.JSON5).side(ConfigSide.CLIENT)
             .comment("Experience Skills client settings.");
 
         LEVEL_UP_TOASTS = builder.defineBoolean("levelUpToasts", true, "Show a toast in the corner of the screen whenever one of your skills levels up.");
+
+        ORB_PICKUP_SOUNDS = builder.defineBoolean("orbPickupSounds", true, "Play collection sounds for skill experience orbs. Does not affect vanilla experience or level-up sounds.");
 
         CONFIG = builder.build();
     }
