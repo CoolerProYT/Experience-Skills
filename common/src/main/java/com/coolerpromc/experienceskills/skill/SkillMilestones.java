@@ -3,6 +3,7 @@ package com.coolerpromc.experienceskills.skill;
 import com.coolerpromc.experienceskills.Constants;
 import com.coolerpromc.experienceskills.api.ExperienceSkillsAPI;
 import com.coolerpromc.experienceskills.api.type.ExperienceType;
+import com.coolerpromc.experienceskills.config.ModGeneralConfig;
 import com.coolerpromc.experienceskills.config.value.Milestone;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,6 +14,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +37,7 @@ public class SkillMilestones {
                 if (instance == null) return;
 
                 instance.removeModifier(modifierId);
-                if (active){
+                if (active && (!attribute.equals(Attributes.STEP_HEIGHT) || ModGeneralConfig.STEP_UP_MILESTONES.get())){
                     instance.addTransientModifier(new AttributeModifier(modifierId, milestone.amount(), milestone.operation()));
                 }
             });
