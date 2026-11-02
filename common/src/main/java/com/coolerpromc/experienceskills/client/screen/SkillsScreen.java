@@ -37,13 +37,14 @@ public class SkillsScreen extends Screen {
     private static final int ROW_HEIGHT = 44;
     private static final int MAX_LIST_WIDTH = 380;
     private static final int LIST_TOP = 32;
-    private static final int FOOTER_HEIGHT = 56;
+    private static final int FOOTER_HEIGHT = 80;
 
     private List<ExperienceType> skills = List.of();
     private double scroll;
     private CycleButton<ExperienceType> fromButton;
     private CycleButton<ExperienceType> toButton;
     private EditBox amountBox;
+    private CycleButton<ExperienceType> bottleSkill;
 
     public SkillsScreen(){
         super(Component.translatable("screen.experienceskills.skills"));
@@ -75,6 +76,18 @@ public class SkillsScreen extends Screen {
             x += amountWidth + gap;
             this.addRenderableWidget(Button.builder(Component.translatable("screen.experienceskills.transfer"), b -> this.transfer())
                 .bounds(x, footerTop, buttonWidth, 20).build());
+        }
+
+        if (!this.skills.isEmpty()) {
+            int chooserWidth = this.listWidth() - 104;
+            this.bottleSkill = this.addRenderableWidget(CycleButton.builder(SkillText::skillName, this.skills.getFirst())
+                .withValues(this.skills).displayOnlyValue()
+                .create(left, this.height - 50, chooserWidth, 20, Component.translatable("screen.experienceskills.bottle.skill")));
+            this.addRenderableWidget(Button.builder(Component.translatable("screen.experienceskills.bottle"), b -> {
+                if (this.minecraft.player != null) this.minecraft.player.connection.sendCommand(
+                    "experienceskills bottle " + this.bottleSkill.getValue().getSerializedName());
+            }).bounds(left + chooserWidth + 4, this.height - 50, 100, 20)
+                .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("screen.experienceskills.bottle.hint"))).build());
         }
 
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, b -> this.onClose()).bounds(center - 100, this.height - 26, 200, 20).build());
