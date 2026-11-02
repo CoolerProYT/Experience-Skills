@@ -36,7 +36,7 @@ Pick a skill and drag the slider to see the bonus at that level and how much of 
 ### Mining
 
 - <ItemSlot skill="pickaxe_breaking_speed" /> <ItemSlot skill="shovel_breaking_speed" /> <ItemSlot skill="axe_breaking_speed" /> <ItemSlot skill="hoe_breaking_speed" /> **Pickaxe, Shovel, Axe and Hoe Breaking Speed** each train from blocks broken with that tool, when it is the correct tool for the block. Each one raises mining speed with that tool only.
-- <ItemSlot skill="mining_luck" /> **Mining Luck** trains from ores mined and adds extra drops to every ore you break: +1 item every 5 levels, up to +20 at level 100.
+- <ItemSlot skill="mining_luck" /> **Mining Luck** trains from ores mined and adds extra ore drops: +1 item every 5 levels, up to +20 at level 100. Silk Touch and drops of the ore block itself receive no extra items, so placing and mining an ore cannot duplicate it. Silk Touch mining still trains the skill.
 - <ItemSlot skill="submerged_breaking_speed" /> **Submerged Breaking Speed** trains from blocks broken while in water. Raises the vanilla Submerged Mining Speed attribute, which softens the slowdown for mining underwater.
 - <ItemSlot skill="floating_breaking_speed" /> **Floating Breaking Speed** trains from blocks broken while you are not standing on the ground. It eases the ×5 slowdown vanilla applies to mining in mid-air, until at level 100 there is none.
 - <ItemSlot skill="block_reach" /> **Block Reach** trains from blocks placed and broken. Raises Block Interaction Range, so you can reach blocks further away.

@@ -2,6 +2,11 @@ package com.coolerpromc.experienceskills.command.custom;
 
 import com.coolerpromc.experienceskills.command.argument.ExperienceTypeArgument;
 import com.coolerpromc.experienceskills.config.ModGeneralConfig;
+import com.coolerpromc.experienceskills.data.component.ModDataComponents;
+import com.coolerpromc.experienceskills.item.ModItems;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.util.Prediction;
 import com.coolerpromc.experienceskills.skill.SkillManager;
 import com.coolerpromc.experienceskills.entity.custom.ModExperienceOrb;
 import com.coolerpromc.experienceskills.api.type.ExperienceType;
@@ -41,6 +46,9 @@ public class ExperienceSkillsCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher){
         dispatcher.register(
             Commands.literal("experienceskills")
+                .then(Commands.literal("bottle")
+                    .then(Commands.argument("skill", new ExperienceTypeArgument())
+                        .executes(c -> bottleExperience(c.getSource(), ExperienceTypeArgument.getExperienceType(c, "skill")))))
                 .then(
                     Commands.literal("transfer")
                         .then(
@@ -170,6 +178,35 @@ public class ExperienceSkillsCommand {
                         )
                 )
         );
+    }
+
+    private static int bottleExperience(CommandSourceStack source, ExperienceType skill) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        String error = null;
+        int amount = ModGeneralConfig.BOTTLE_XP.get();
+        int slot = -1;
+        if (!ModGeneralConfig.BOTTLING_ENABLED.get()) error = "disabled";
+        else if (player.isSpectator() || !player.isAlive()) error = "unavailable";
+        else if (skill == ExperienceType.VANILLA || !skill.isEnabled() || skill.getKey() == null) error = "skill";
+        else if (SkillManager.getPoints(player, skill) < amount) error = "xp";
+        else {
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                if (player.getInventory().getItem(i).is(Items.GLASS_BOTTLE)) { slot = i; break; }
+            }
+            if (slot < 0) error = "glass";
+        }
+        if (error != null) throw new SimpleCommandExceptionType(Component.translatable("commands.experienceskills.bottle." + error, amount)).create();
+
+        var bottle = new ItemStack(ModItems.EXPERIENCE_BOTTLE.get());
+        bottle.set(ModDataComponents.EXPERIENCE_TYPE.get(), skill);
+        bottle.set(ModDataComponents.STORED_XP.get(), amount);
+        player.getInventory().getItem(slot).shrink(1);
+        SkillManager.addPoints(player, skill, -amount, false);
+        player.getInventory().placeItemBackInInventory(bottle, Prediction.SERVER_ONLY);
+        player.inventoryMenu.broadcastChanges();
+        source.sendSuccess(() -> Component.translatable("commands.experienceskills.bottle.success", amount,
+            Component.translatable("skill.experienceskills." + skill.getSerializedName())), false);
+        return amount;
     }
 
     private static int transferExperience(CommandSourceStack source, ExperienceType from, ExperienceType to, int points) throws CommandSyntaxException {

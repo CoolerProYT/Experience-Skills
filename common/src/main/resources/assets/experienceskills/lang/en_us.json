@@ -114,5 +114,15 @@
   "jei.experienceskills.earned_by": "Earn %s XP every %s of:",
   "jei.experienceskills.bonus": "Bonus at max level: %s (level %s)",
   "jei.experienceskills.milestone": "Level %s unlocks: %s",
-  "jade.experienceskills.orb": "%s orb: %s XP"
+  "jade.experienceskills.orb": "%s orb: %s XP",
+  "screen.experienceskills.bottle": "Bottle XP",
+  "screen.experienceskills.bottle.skill": "Skill to bottle",
+  "screen.experienceskills.bottle.hint": "Store skill XP in a glass bottle from your inventory. The server sets the amount (default: 100 XP).",
+  "item.experienceskills.experience_bottle.stored": "Stores %s skill XP",
+  "commands.experienceskills.bottle.disabled": "Skill XP bottling is disabled on this server",
+  "commands.experienceskills.bottle.unavailable": "You must be alive and outside spectator mode to bottle XP",
+  "commands.experienceskills.bottle.skill": "Choose an enabled skill to bottle",
+  "commands.experienceskills.bottle.xp": "You need at least %s XP in that skill to fill a bottle",
+  "commands.experienceskills.bottle.glass": "You need a glass bottle in your inventory",
+  "commands.experienceskills.bottle.success": "Stored %s %s XP in a bottle"
 }

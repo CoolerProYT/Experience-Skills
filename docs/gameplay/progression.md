@@ -58,6 +58,10 @@ Players who already had the levels before updating get the advancements the next
 
 When you die, each skill with `dropOnDeath` enabled loses part of its experience. By default that is all of it, like vanilla. Up to `level × 7` points (capped at 100) drop as orbs you can pick back up. Server owners can soften this per skill with `deathPenalty` and `deathDropCap`. Nothing is lost when the `keepInventory` gamerule is on.
 
+## Storing experience
+
+Use the skill selector and **Bottle XP** button at the bottom of the skills screen to store your own XP in a glass bottle. Each bottle costs 100 skill XP by default. See [Experience Bottle](/gameplay/experience-bottle) for storage, chest loot and settings.
+
 ## Transferring experience
 
 You can move experience from one skill to another, from the skills screen or with:
@@ -83,7 +87,7 @@ The boost applies to experience earned from stats. It does not multiply experien
 
 ## Shared experience
 
-On servers that enable it, collecting skill experience also gives nearby players a share of it, while you keep the full amount. This is off by default; see `sharedXp` in the [general settings](/config/skill-config#general-settings).
+On servers that enable it, collecting skill experience from sources other than bottles also gives nearby players a share of it, while you keep the full amount. This is off by default; see `sharedXp` in the [general settings](/config/skill-config#general-settings).
 
 ## Scoreboards
 

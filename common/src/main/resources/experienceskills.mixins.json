@@ -10,7 +10,8 @@
     "FishingHookMixin",
     "FoodPropertiesMixin",
     "LivingEntityMixin",
-    "VillagerMixin"
+    "VillagerMixin",
+    "RandomizableContainerMixin"
   ],
   "server": [],
   "injectors": {

@@ -54,6 +54,16 @@ public class ModExperienceBottle extends ExperienceBottleItem {
     }
 
     @Override
+    public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext context,
+                                net.minecraft.world.item.component.TooltipDisplay display,
+                                java.util.function.Consumer<Component> lines, net.minecraft.world.item.TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, lines, flag);
+        Integer stored = stack.get(ModDataComponents.STORED_XP.get());
+        if (stored != null) lines.accept(Component.translatable("item.experienceskills.experience_bottle.stored", stored)
+            .withStyle(net.minecraft.ChatFormatting.GRAY));
+    }
+
+    @Override
     public Component getName(ItemStack itemStack) {
         ExperienceType experienceType = itemStack.get(ModDataComponents.EXPERIENCE_TYPE.get());
         if (experienceType != null){

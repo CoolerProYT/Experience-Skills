@@ -31,7 +31,7 @@ Press **R** (rebindable as *Open Skills Screen* in *Options → Controls*) to se
 
 ## Experience Bottles
 
-Each skill has its own [Experience Bottle](/gameplay/experience-bottle), tinted in the skill's colour. Throw one and it bursts into orbs for that skill only. They are found in the **Experience Skills: Bottle** creative tab.
+Each skill has its own [Experience Bottle](/gameplay/experience-bottle), tinted in the skill's colour. Throw one and it bursts into orbs for that skill only. Make them in survival with **Bottle XP** in the skills screen, or find them in selected structure chests. They are also available in the **Experience Skills: Bottle** creative tab.
 
 ## What's next
 

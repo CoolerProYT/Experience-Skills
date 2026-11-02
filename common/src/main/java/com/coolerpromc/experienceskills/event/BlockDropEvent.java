@@ -4,11 +4,14 @@ import com.coolerpromc.experienceskills.attribute.ModAttributes;
 import com.coolerpromc.experienceskills.platform.Services;
 import com.coolerpromc.experienceskills.stat.ModStats;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,9 +24,17 @@ public class BlockDropEvent {
     public static boolean handleBlockDrop(ServerLevel level, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, List<ItemEntity> drops, @Nullable Entity breaker, ItemStack tool) {
         if (state.is(Services.PLATFORM.oreTag()) && breaker instanceof ServerPlayer player){
             player.awardStat(ModStats.ORE_MINED.get(), 1);
-            double extra = player.getAttribute(ModAttributes.MINING_LUCK.holder()).getValue();
-            for (ItemEntity drop : drops) {
-                drop.getItem().setCount((int) (drop.getItem().getCount() + extra));
+            boolean silkTouch = EnchantmentHelper.getItemEnchantmentLevel(
+                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SILK_TOUCH), tool) > 0;
+            if (!silkTouch) {
+                double extra = player.getAttributeValue(ModAttributes.MINING_LUCK.holder());
+                for (ItemEntity drop : drops) {
+                    ItemStack stack = drop.getItem();
+                    // Never multiply a placeable copy of the ore, including custom self-dropping ores.
+                    if (!stack.is(state.getBlock().asItem())) {
+                        stack.setCount((int) (stack.getCount() + extra));
+                    }
+                }
             }
         }
 

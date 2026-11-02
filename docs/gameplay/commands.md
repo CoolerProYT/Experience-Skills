@@ -66,3 +66,11 @@ If you have fewer points than you asked to move, everything you have is moved. T
 ```
 /give @p experienceskills:experience_bottle[experienceskills:experience_type="jump"] 8
 ```
+
+## Bottling your skill XP
+
+```
+/experienceskills bottle <skill>
+```
+
+No operator permission is needed. Consumes one glass bottle from your inventory and stores 100 XP from the selected skill by default. The server can disable extraction or set a different amount. See [Experience Bottle](/gameplay/experience-bottle).

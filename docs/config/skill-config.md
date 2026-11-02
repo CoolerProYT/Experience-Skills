@@ -132,6 +132,10 @@ Settings that apply to every skill live in `config/experienceskills-general.json
 | `sharedXp.radius` | `16.0` | How close, in blocks, another player must be to get a share. |
 | `transfer.enabled` | `true` | Whether players can move experience between their skills. |
 | `transfer.efficiency` | `0.5` | The fraction of transferred experience that arrives; the rest is lost. |
+| `bottling.enabled` | `true` | Allow players to store skill XP in glass bottles through the skills screen or `/experienceskills bottle <skill>`. |
+| `bottling.xpPerBottle` | `100` | XP withdrawn and stored per glass bottle, from 1 to 1,000,000. |
+| `bottling.lootChance` | `0.1` | Chance of one bottle in selected structure chests; `0` disables bottle loot. |
+| `bottling.lootXp` | `100` | XP stored in each structure loot bottle, from 1 to 1,000,000. |
 | `milestones.stepUp` | `true` | Allow step-height milestones such as Walking Speed level 50. Set to `false` and restart the server/world to disable automatic one-block step-up. Sneaking always ignores skill milestone step-height bonuses. |
 | `scoreboard.enabled` | `false` | Mirror skill levels into `es_<skill>` scoreboard objectives. |
 
