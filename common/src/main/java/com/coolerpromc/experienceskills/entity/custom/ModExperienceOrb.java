@@ -37,6 +37,8 @@ public class ModExperienceOrb extends Entity {
     private int age = 0;
     private int health = 5;
     private int count = 1;
+    // Bottled XP must not generate extra XP through repeated withdrawal and pickup.
+    private boolean shareable = true;
     private @Nullable Player followingPlayer;
     private final InterpolationHandler interpolation = new InterpolationHandler(this);
     private final ExperienceType experienceType;
@@ -162,22 +164,27 @@ public class ModExperienceOrb extends Entity {
     }
 
     public static void awardWithDirection(ServerLevel level, Vec3 pos, Vec3 roughDirection, int amount, ExperienceType type) {
+        awardWithDirection(level, pos, roughDirection, amount, type, true);
+    }
+
+    public static void awardWithDirection(ServerLevel level, Vec3 pos, Vec3 roughDirection, int amount, ExperienceType type, boolean shareable) {
         while (amount > 0) {
             int newCount = getExperienceValue(amount);
             amount -= newCount;
-            if (!type.isEnabled() || tryMergeToExisting(level, pos, newCount, type)) continue;
+            if (!type.isEnabled() || tryMergeToExisting(level, pos, newCount, type, shareable)) continue;
 
             ModExperienceOrb orb = ModEntities.byName(type.getSerializedName() + "_experience_orb").get().create(level, EntitySpawnReason.TRIGGERED);
             if (orb != null) {
+                orb.shareable = shareable;
                 orb.spawn(level, pos, roughDirection, newCount);
             }
         }
     }
 
-    private static boolean tryMergeToExisting(ServerLevel level, Vec3 pos, int value, ExperienceType type) {
+    private static boolean tryMergeToExisting(ServerLevel level, Vec3 pos, int value, ExperienceType type, boolean shareable) {
         AABB box = AABB.ofSize(pos, 1.0, 1.0, 1.0);
         int id = level.getRandom().nextInt(40);
-        List<ModExperienceOrb> orbs = level.getEntities(EntityTypeTest.forClass(ModExperienceOrb.class), box, orbx -> orbx.experienceType == type && canMerge(orbx, id, value));
+        List<ModExperienceOrb> orbs = level.getEntities(EntityTypeTest.forClass(ModExperienceOrb.class), box, orbx -> orbx.shareable == shareable && orbx.experienceType == type && canMerge(orbx, id, value));
         if (!orbs.isEmpty()) {
             ModExperienceOrb orb = orbs.getFirst();
             orb.count++;
@@ -189,7 +196,7 @@ public class ModExperienceOrb extends Entity {
     }
 
     private boolean canMerge(ModExperienceOrb orb) {
-        return orb != this && orb.experienceType == this.experienceType && canMerge(orb, this.getId(), this.getValue());
+        return orb.shareable == this.shareable && orb != this && orb.experienceType == this.experienceType && canMerge(orb, this.getId(), this.getValue());
     }
 
     private static boolean canMerge(ModExperienceOrb orb, int id, int value) {
@@ -237,10 +244,12 @@ public class ModExperienceOrb extends Entity {
         output.putShort("Age", (short)this.age);
         output.putShort("Value", (short)this.getValue());
         output.putInt("Count", this.count);
+        output.putBoolean("Shareable", this.shareable);
     }
 
     @Override
     protected void readAdditionalSaveData(ValueInput input) {
+        this.shareable = input.getBooleanOr("Shareable", true);
         this.health = input.getShortOr("Health", (short)5);
         this.age = input.getShortOr("Age", (short)0);
         this.setValue(input.getShortOr("Value", (short)0));
@@ -254,7 +263,7 @@ public class ModExperienceOrb extends Entity {
                 player.takeXpDelay = 2;
                 serverPlayer.level().broadcastEntityEvent(this, PICKUP_SOUND_EVENT);
                 SkillManager.addPoints(serverPlayer, this.experienceType, this.getValue(), true);
-                SkillManager.shareWithNearby(serverPlayer, this.experienceType, this.getValue());
+                if (this.shareable) SkillManager.shareWithNearby(serverPlayer, this.experienceType, this.getValue());
 
                 this.count--;
                 if (this.count == 0) {
