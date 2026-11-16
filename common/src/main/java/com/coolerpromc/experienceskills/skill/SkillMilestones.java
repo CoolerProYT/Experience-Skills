@@ -34,7 +34,13 @@ public class SkillMilestones {
 
             milestone.attribute().flatMap(id -> lookup(BuiltInRegistries.ATTRIBUTE.get(id).map(h -> (Holder<Attribute>) h), id)).ifPresent(attribute -> {
                 AttributeInstance instance = player.getAttribute(attribute);
-                if (instance == null) return;
+                if (instance == null){
+                    Identifier id = milestone.attribute().get();
+                    if (WARNED.add(id)){
+                        Constants.LOGGER.warn("Skill milestone attribute {} does not exist on players (it may be a mob-only attribute); it will be ignored.", id);
+                    }
+                    return;
+                }
 
                 instance.removeModifier(modifierId);
                 if (active && (!attribute.equals(Attributes.STEP_HEIGHT) || ModGeneralConfig.STEP_UP_MILESTONES.get())){

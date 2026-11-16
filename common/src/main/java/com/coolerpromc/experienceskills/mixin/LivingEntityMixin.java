@@ -63,6 +63,18 @@ public abstract class LivingEntityMixin implements ISavedHealthHolder {
         return withoutMilestones == null ? original : Math.min(original, (float) withoutMilestones.getValue());
     }
 
+    /**
+     * Mobs scale their follow range by the target's visibility percent when picking a target,
+     * so lowering it here shrinks how far away they notice this entity. Matched by name only:
+     * the parameters differ between Minecraft versions.
+     */
+    @ModifyReturnValue(method = "getVisibilityPercent", at = @At("RETURN"))
+    private double applyDetectionRange(double original){
+        LivingEntity self = (LivingEntity) (Object) this;
+        AttributeInstance detectionRange = self.getAttribute(ModAttributes.DETECTION_RANGE.holder());
+        return detectionRange == null ? original : original * detectionRange.getValue();
+    }
+
     @ModifyReturnValue(method = "createLivingAttributes", at = @At("RETURN"))
     private static AttributeSupplier.Builder addAttribute(AttributeSupplier.Builder builder) {
         ModAttributes.init();
