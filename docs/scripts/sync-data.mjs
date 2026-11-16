@@ -79,10 +79,12 @@ const splitArgs = (text) => {
   return out
 }
 
-/** `vanilla("step_height")` is a minecraft id; a quoted string is taken as-is. */
+/** `vanilla("step_height")` is a minecraft id, `ModAttributes.X.id()` is ours; a quoted string is taken as-is. */
 const idArg = (expr) => {
   const vanilla = expr.match(/vanilla\("([^"]+)"\)/)
   if (vanilla) return `minecraft:${vanilla[1]}`
+  const mod = expr.match(/ModAttributes\.(\w+)\.id\(\)/)
+  if (mod) return `experienceskills:${path(mod[1])}`
   const literal = expr.match(/"([^"]+)"/)
   return literal ? literal[1] : expr
 }

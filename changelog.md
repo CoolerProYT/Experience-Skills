@@ -1,9 +1,6 @@
-## 26.3.0.5
-### Fixed
-- Fixed ore duplication from Mining Luck with Silk Touch (#3). Ore-block drops no longer receive bonus items; mining still trains the skill.
-- Bottled skill XP no longer grants nearby shared XP, preventing repeated bottling from generating extra XP.
-- Thrown skill bottles retain their skill and stored XP after a world reload.
-
+## 26.3.0.6
 ### Added
-- Survival skill XP bottling from the skills screen or `/experienceskills bottle <skill>`; consumes one glass bottle and stores 100 XP by default.
-- Exact XP tooltips and rare skill bottles in selected structure chests, with configurable extraction amounts and loot chances.
+- New `experienceskills:detection_range` attribute (#4). It multiplies how far away mobs notice the player (default 1.0, minimum 0.1) and stacks with sneaking, invisibility and mob heads. Use it in a skill milestone, e.g. `{ "level": 50, "attribute": "experienceskills:detection_range", "amount": -0.6, "operation": "add_multiplied_base" }`.
+
+### Changed
+- Milestones that target an attribute players do not have (such as the mob-only `minecraft:follow_range`) now log a warning instead of being ignored silently.

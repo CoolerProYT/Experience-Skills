@@ -15,6 +15,8 @@ const EFFECTS: Record<string, string> = {
   'experienceskills:hoe_mining_speed': 'Multiplies mining speed while holding a hoe.',
   'experienceskills:floating_mining_speed':
     'Eases the off-ground mining penalty. Vanilla divides mining speed by 5 while you are not on the ground; each point lowers that divisor by 1, so 4 removes it.',
+  'experienceskills:detection_range':
+    'Multiplies how far away mobs notice you. Stacks with sneaking, invisibility and mob heads; 0.6 means a zombie that would spot you at 35 blocks only spots you at 21.',
 }
 
 const rows = computed(() => data.attributes.map((a) => ({ ...a, skills: skillsUsingAttribute(a.id) })))

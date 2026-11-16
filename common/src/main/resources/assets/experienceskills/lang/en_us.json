@@ -11,6 +11,7 @@
   "attribute.name.axe_mining_speed": "Axe Mining Speed",
   "attribute.name.hoe_mining_speed": "Hoe Mining Speed",
   "attribute.name.floating_mining_speed": "Floating Mining Speed",
+  "attribute.name.detection_range": "Detection Range",
   "stat.experienceskills.block_broken": "Block Broken",
   "stat.experienceskills.block_walked": "Block Walked",
   "stat.experienceskills.under_water_time": "Under Water Time (Ticks)",

@@ -22,6 +22,7 @@ public class ModAttributes {
     public static final RegistryHandler<Attribute, Attribute> TWIN_CHANCE = register("twin_chance", new RangedAttribute("attribute.name.twin_chance", 0.0, 0.0, 1.0).setSyncable(true));
     public static final RegistryHandler<Attribute, Attribute> SATURATION_BONUS = register("saturation_bonus", new RangedAttribute("attribute.name.saturation_bonus", 0.0, 0.0, 10.0).setSyncable(true));
     public static final RegistryHandler<Attribute, Attribute> FLOATING_MINING_SPEED = register("floating_mining_speed", new RangedAttribute("attribute.name.floating_mining_speed", 0, 0.0, 4).setSyncable(true));
+    public static final RegistryHandler<Attribute, Attribute> DETECTION_RANGE = register("detection_range", new RangedAttribute("attribute.name.detection_range", 1.0, 0.1, 1.0).setSyncable(true));
 
     public static RegistryHandler<Attribute, Attribute> register(String name, Attribute attribute){
         return Services.REGISTRY.registerAttribute(name, attribute);
