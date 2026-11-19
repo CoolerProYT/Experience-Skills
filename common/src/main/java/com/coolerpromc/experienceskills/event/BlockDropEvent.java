@@ -38,16 +38,26 @@ public class BlockDropEvent {
             }
         }
 
-        if (state.getBlock() instanceof CropBlock crop && crop.isMaxAge(state) && breaker instanceof ServerPlayer player){
+        if (breaker instanceof ServerPlayer player) {
+            handleCropHarvest(level, state, player, drops.stream().map(ItemEntity::getItem).toList());
+        }
+        return false;
+    }
+
+    /**
+     * Awards the crop harvest stat and applies Harvest Luck to the given drops.
+     * Called for normal block breaking, and for mods that harvest crops by calling
+     * {@code Block.getDrops} directly (e.g. Right Click Harvest).
+     */
+    public static void handleCropHarvest(ServerLevel level, BlockState state, ServerPlayer player, List<ItemStack> drops) {
+        if (state.getBlock() instanceof CropBlock crop && crop.isMaxAge(state)){
             player.awardStat(ModStats.CROPS_HARVESTED.get(), 1);
             double chance = player.getAttributeValue(ModAttributes.HARVEST_LUCK.holder());
             if (chance > 0 && level.getRandom().nextDouble() < chance){
-                for (ItemEntity drop : drops) {
-                    ItemStack stack = drop.getItem();
+                for (ItemStack stack : drops) {
                     stack.setCount(Math.min(stack.getCount() * 2, stack.getMaxStackSize()));
                 }
             }
         }
-        return false;
     }
 }
